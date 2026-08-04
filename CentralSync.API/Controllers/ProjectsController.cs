@@ -24,7 +24,6 @@ namespace CentralSync.API.Controllers
             {
                 Name = project.Name,
                 Description = project.Description,
-
             };
 
             return Ok(projectDomainModel);
