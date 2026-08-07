@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CentralSync.API.Models.Domain.Enums;
 
 namespace CentralSync.API.Models.Domain
 {
@@ -35,12 +36,5 @@ namespace CentralSync.API.Models.Domain
 
         public bool IsDeleted { get; set; }
 
-    }
-    public enum UserRole
-    {
-        Admin = 1,
-        ProjectManager = 2,
-        TeamMember = 3,
-        Viewer = 4
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CentralSync.API.Models.Domain.Enums;
 
 namespace CentralSync.API.Models.Domain
 {
@@ -35,14 +36,5 @@ namespace CentralSync.API.Models.Domain
         public User Owner { get; set; }
 
         public bool IsDeleted { get; set; }
-    }
-
-    public enum ProjectStatus
-    {
-        Planning = 1,
-        Active = 2,
-        OnHold = 3,
-        Completed = 4,
-        Cancelled = 5
     }
 }

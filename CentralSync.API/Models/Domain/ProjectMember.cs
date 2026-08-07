@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CentralSync.API.Models.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CentralSync.API.Models.Domain
@@ -23,12 +24,5 @@ namespace CentralSync.API.Models.Domain
 
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
-    }
-
-    public enum ProjectMemberRole
-    {
-        Member = 1,
-        Contributor = 2,
-        Viewer = 3
     }
 }

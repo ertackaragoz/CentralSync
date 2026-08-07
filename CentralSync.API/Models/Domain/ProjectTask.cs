@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CentralSync.API.Models.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CentralSync.API.Models.Domain
@@ -44,21 +45,5 @@ namespace CentralSync.API.Models.Domain
         public User CreatedByUser { get; set; }
 
         public bool IsDeleted { get; set; }
-    }
-
-    public enum ProjectTaskStatus
-    {
-        Todo = 1,
-        InProgress = 2,
-        InReview = 3,
-        Done = 4
-    }
-
-    public enum ProjectTaskPriority
-    {
-        Low = 1,
-        Medium = 2,
-        High = 3,
-        Critical = 4
     }
 }
