@@ -15,7 +15,7 @@ namespace CentralSync.API.Models.Domain
 
         public Guid UserId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 

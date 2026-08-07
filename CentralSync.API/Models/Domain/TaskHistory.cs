@@ -21,7 +21,7 @@ namespace CentralSync.API.Models.Domain
 
         public string? Description { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         [ForeignKey(nameof(TaskId))]
         public ProjectTask Task { get; set; }

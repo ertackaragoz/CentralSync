@@ -15,7 +15,7 @@ namespace CentralSync.API.Models.Domain
 
         public ProjectMemberRole Role { get; set; }
 
-        public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
+        public DateTime JoinedAt { get; set; }
 
         public bool IsActive { get; set; }
 
