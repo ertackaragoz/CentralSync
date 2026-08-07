@@ -1,4 +1,5 @@
-﻿using CentralSync.API.Data;
+﻿using Azure.Core;
+using CentralSync.API.Data;
 using CentralSync.API.Models.Domain;
 using CentralSync.API.Models.DTO;
 using CentralSync.API.Services.Abstract;
@@ -24,6 +25,21 @@ namespace CentralSync.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddProject([FromBody] CreateProjectRequestDto project)
         {
+            if (DateTime.UtcNow > project.StartDate)
+            {
+                return BadRequest();
+            }
+
+            if (project.EndDate != null && DateTime.UtcNow > project.EndDate)
+            {
+                return BadRequest();
+            }
+
+            if (project.EndDate<project.StartDate)
+            {
+                return BadRequest();
+            }
+
             var projectDomainModel = new Project()
             {
                 Name = project.Name,
@@ -58,7 +74,7 @@ namespace CentralSync.API.Controllers
 
         [HttpPost("{projectId:guid}/members")]
 
-        public async Task<IActionResult> AddMemberToProject([FromBody] AddProjectMemberRequestDto request, [FromRoute] Guid projectId)
+        public async Task<IActionResult> AddMemberToProject([FromRoute] Guid projectId, [FromBody] AddProjectMemberRequestDto request)
         {
             var projectMemberDomain = new ProjectMember()
             {
@@ -81,6 +97,39 @@ namespace CentralSync.API.Controllers
                 JoinedAt = projectMemberDomain.JoinedAt
             };
             return Ok(projectMemberDto);
+        }
+
+        [HttpPut("{projectId:guid}")]
+        public async Task<IActionResult> UpdateProject([FromRoute] Guid projectId, [FromBody] UpdateProjectRequestDto request)
+        {
+            if (DateTime.UtcNow > request.StartDate)
+            {
+                return BadRequest();
+            }
+
+            if (request.EndDate != null && DateTime.UtcNow > request.EndDate)
+            {
+                return BadRequest();
+            }
+
+            if (request.EndDate < request.StartDate)
+            {
+                return BadRequest();
+            }
+
+            var projectDomainModel = await _dbcontext.Projects.FindAsync(projectId);
+
+            if (projectDomainModel == null) { 
+            return BadRequest();
+            }
+
+            projectDomainModel.Name  = request.Name;
+            projectDomainModel.Description = request.Description;
+            projectDomainModel.StartDate = request.StartDate;
+            projectDomainModel.EndDate = request.EndDate;
+
+            await _dbcontext.SaveChangesAsync();
+            return Ok();
         }
     }
 }
