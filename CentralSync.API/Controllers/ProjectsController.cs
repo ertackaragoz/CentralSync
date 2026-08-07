@@ -55,5 +55,32 @@ namespace CentralSync.API.Controllers
             };
             return Ok(projectDto);
         }
+
+        [HttpPost("{projectId:guid}/members")]
+
+        public async Task<IActionResult> AddMemberToProject([FromBody] AddProjectMemberRequestDto request, [FromRoute] Guid projectId)
+        {
+            var projectMemberDomain = new ProjectMember()
+            {
+                ProjectId = projectId,
+                UserId = request.UserId,
+                Role = request.Role,
+                IsActive = true
+            };
+
+            await _dbcontext.ProjectMembers.AddAsync(projectMemberDomain);
+            await _dbcontext.SaveChangesAsync();
+
+            var projectMemberDto = new ProjectMemberDto()
+            {
+                Id = projectMemberDomain.Id,
+                ProjectId = projectMemberDomain.ProjectId,
+                UserId= projectMemberDomain.UserId,
+                Role = projectMemberDomain.Role,
+                IsActive = projectMemberDomain.IsActive,
+                JoinedAt = projectMemberDomain.JoinedAt
+            };
+            return Ok(projectMemberDto);
+        }
     }
 }

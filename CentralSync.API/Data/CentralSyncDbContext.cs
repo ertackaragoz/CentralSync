@@ -56,6 +56,11 @@ namespace CentralSync.API.Data
                     entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
                 }
 
+                if (entry.State == EntityState.Added && entry.Metadata.FindProperty("JoinedAt") != null)
+                {
+                    entry.Property("JoinedAt").CurrentValue = DateTime.UtcNow;
+                }
+
                 if (entry.State == EntityState.Modified && entry.Metadata.FindProperty("UpdatedAt") != null)
                 {
                     entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
