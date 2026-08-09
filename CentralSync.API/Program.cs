@@ -1,4 +1,6 @@
 using CentralSync.API.Data;
+using CentralSync.API.Repositories.Abstract;
+using CentralSync.API.Repositories.Concrete;
 using CentralSync.API.Services.Abstract;
 using CentralSync.API.Services.Concrete;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +25,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<CentralSyncDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CentralSyncConnectionString")));
+
+builder.Services.AddScoped<IProjectRepository, SQLProjectRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

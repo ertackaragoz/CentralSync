@@ -1,7 +1,9 @@
 ﻿using Azure.Core;
 using CentralSync.API.Data;
 using CentralSync.API.Models.Domain;
+using CentralSync.API.Models.Domain.Enums;
 using CentralSync.API.Models.DTO;
+using CentralSync.API.Repositories.Abstract;
 using CentralSync.API.Services.Abstract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +15,12 @@ namespace CentralSync.API.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly CentralSyncDbContext _dbcontext;
+        private readonly IProjectRepository _projectRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public ProjectsController(CentralSyncDbContext dbcontext, ICurrentUserService currentUserService)
+        public ProjectsController(IProjectRepository projectRepository, ICurrentUserService currentUserService)
         {
-            _dbcontext = dbcontext;
+            _projectRepository = projectRepository;
             _currentUserService = currentUserService;
         }
 
@@ -52,8 +54,7 @@ namespace CentralSync.API.Controllers
                 IsDeleted = false,
             };
 
-            await _dbcontext.AddAsync(projectDomainModel);
-            await _dbcontext.SaveChangesAsync();
+            await _projectRepository.AddProjectAsync(projectDomainModel);
 
             var projectDto = new ProjectDto()
             {
@@ -84,8 +85,7 @@ namespace CentralSync.API.Controllers
                 IsActive = true
             };
 
-            await _dbcontext.ProjectMembers.AddAsync(projectMemberDomain);
-            await _dbcontext.SaveChangesAsync();
+            await _projectRepository.AddMemberToProjectAsync(projectMemberDomain);
 
             var projectMemberDto = new ProjectMemberDto()
             {
@@ -117,7 +117,7 @@ namespace CentralSync.API.Controllers
                 return BadRequest();
             }
 
-            var projectDomainModel = await _dbcontext.Projects.FindAsync(projectId);
+            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
 
             if (projectDomainModel == null) { 
             return BadRequest();
@@ -128,7 +128,7 @@ namespace CentralSync.API.Controllers
             projectDomainModel.StartDate = request.StartDate;
             projectDomainModel.EndDate = request.EndDate;
 
-            await _dbcontext.SaveChangesAsync();
+            await _projectRepository.UpdateAsync(projectDomainModel);
             return Ok();
         }
     }
