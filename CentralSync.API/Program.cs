@@ -19,6 +19,8 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddScoped<ICurrentUserService, MockCurrentUserService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
