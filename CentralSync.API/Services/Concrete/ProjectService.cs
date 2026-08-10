@@ -9,10 +9,12 @@ namespace CentralSync.API.Services.Concrete
     public class ProjectService : IProjectService
     {
         private readonly IProjectRepository _projectRepository;
+        private readonly ICurrentUserService _currentUserService;
 
-        public ProjectService(IProjectRepository projectRepository)
+        public ProjectService(IProjectRepository projectRepository, ICurrentUserService currentUserService)
         {
             _projectRepository = projectRepository;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IEnumerable<ProjectDto>> GetAllProjectsAsync(int page, int pageSize, ProjectStatus? status)
@@ -63,16 +65,11 @@ namespace CentralSync.API.Services.Concrete
             };
         }
 
-        public async Task<ProjectDto> CreateProjectAsync(CreateProjectRequestDto request, Guid userId)
+        public async Task<ProjectDto> CreateProjectAsync(CreateProjectRequestDto request)
         {
-            if (DateTime.UtcNow > request.StartDate)
+            if (request.EndDate != null && DateTime.UtcNow.Date > request.EndDate.Value.Date)
             {
-                throw new ArgumentException("Start date can't be in the past");
-            }
-
-            if (request.EndDate != null && DateTime.UtcNow > request.EndDate)
-            {
-                throw new ArgumentException("End date can't be in the past");
+                throw new ArgumentException("End date can't be a day in the past");
             }
 
             if (request.EndDate < request.StartDate)
@@ -87,7 +84,7 @@ namespace CentralSync.API.Services.Concrete
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
                 Status = request.Status,
-                OwnerId = userId,
+                OwnerId = _currentUserService.UserId,
                 IsArchived = false,
                 IsDeleted = false,
             };
@@ -140,16 +137,6 @@ namespace CentralSync.API.Services.Concrete
 
         public async Task<bool> UpdateProjectAsync(Guid projectId, UpdateProjectRequestDto request)
         {
-            if (DateTime.UtcNow > request.StartDate)
-            {
-                throw new ArgumentException("Start date can't be in the past");
-            }
-
-            if (request.EndDate != null && DateTime.UtcNow > request.EndDate)
-            {
-                throw new ArgumentException("End date can't be in the past");
-            }
-
             if (request.EndDate < request.StartDate)
             {
                 throw new ArgumentException("The end date cannot be set before the start date.");
@@ -159,6 +146,7 @@ namespace CentralSync.API.Services.Concrete
 
             if (projectDomainModel == null) { return false; }
             if (projectDomainModel.IsArchived) { throw new InvalidOperationException("Archived projects can't be updated"); }
+            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId) { throw new UnauthorizedAccessException("No access to make changes in this project."); }
 
             projectDomainModel.Name = request.Name;
             projectDomainModel.Description = request.Description;
@@ -174,6 +162,7 @@ namespace CentralSync.API.Services.Concrete
             var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
 
             if (projectDomainModel == null) return false;
+            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId) { throw new UnauthorizedAccessException("No access to make changes in this project."); }
 
             projectDomainModel.IsArchived = request.IsArchived;
             projectDomainModel.ArchivedAt = request.IsArchived ? DateTime.UtcNow : null;
@@ -187,6 +176,7 @@ namespace CentralSync.API.Services.Concrete
             var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
 
             if (projectDomainModel == null) { return false; }
+            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId) { throw new UnauthorizedAccessException("No access to make changes in this project."); }
 
             projectDomainModel.IsDeleted = true;
 

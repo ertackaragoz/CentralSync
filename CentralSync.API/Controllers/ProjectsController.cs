@@ -17,12 +17,10 @@ namespace CentralSync.API.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
-        private readonly ICurrentUserService _currentUserService;
 
-        public ProjectsController(IProjectService projectService, ICurrentUserService currentUserService)
+        public ProjectsController(IProjectService projectService)
         {
             _projectService = projectService;
-            _currentUserService = currentUserService;
         }
 
         [HttpGet]
@@ -46,7 +44,7 @@ namespace CentralSync.API.Controllers
         {
             try
             {
-                var projectDto = await _projectService.CreateProjectAsync(request, _currentUserService.UserId);
+                var projectDto = await _projectService.CreateProjectAsync(request);
                 return Ok(projectDto);
             }
             catch (ArgumentException ex) { return BadRequest(ex.Message); }
@@ -73,28 +71,34 @@ namespace CentralSync.API.Controllers
                 if (result == false) return NotFound();
                 return NoContent();
             }
+            catch (UnauthorizedAccessException ex) { return StatusCode(StatusCodes.Status403Forbidden, ex.Message); }
             catch (ArgumentException ex) { return BadRequest(ex.Message); }
             catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
-
-            
         }
 
         [HttpPatch("{projectId:guid}/archive")]
         public async Task<IActionResult> ArchiveProject([FromRoute] Guid projectId, [FromBody] ArchiveProjectRequestDto request)
         {
-            var result = await _projectService.ArchiveProjectAsync(projectId, request);
-            if (result == false) return NotFound();
+            try
+            {
+                var result = await _projectService.ArchiveProjectAsync(projectId, request);
+                if (result == false) return NotFound();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException ex) { return StatusCode(StatusCodes.Status403Forbidden, ex.Message); }
         }
 
         [HttpDelete("{projectId:guid}")]
         public async Task<IActionResult> DeleteProject([FromRoute] Guid projectId)
         {
-            var result = await _projectService.DeleteProjectAsync(projectId);
-            if (result == false) return NotFound("Project not found");
-
-            return NoContent();
+            try
+            {
+                var result = await _projectService.DeleteProjectAsync(projectId);
+                if (result == false) return NotFound("Project not found");
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException ex) { return StatusCode(StatusCodes.Status403Forbidden, ex.Message); }
         }
     }
 }
