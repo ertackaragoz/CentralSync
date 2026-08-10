@@ -24,6 +24,33 @@ namespace CentralSync.API.Controllers
             _currentUserService = currentUserService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllProjects([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] ProjectStatus? status = null)
+        {
+            var projectsDomain = await _projectRepository.GetAllProjectsAsync(page, pageSize, status);
+
+            var projectsDto = new List<ProjectDto>();
+
+            foreach (var projectDomain in projectsDomain)
+            {
+                projectsDto.Add(new ProjectDto()
+                {
+                    Id = projectDomain.Id,
+                    Name = projectDomain.Name,
+                    Description = projectDomain.Description,
+                    StartDate = projectDomain.StartDate,
+                    Status = projectDomain.Status,
+                    ArchivedAt = projectDomain.ArchivedAt,
+                    CreatedAt = projectDomain.CreatedAt,
+                    IsArchived = projectDomain.IsArchived,
+                    UpdatedAt = projectDomain.UpdatedAt,
+                    EndDate = projectDomain.EndDate,
+                    OwnerId = projectDomain.OwnerId
+                });
+            }
+            return Ok(projectsDto);
+        }
+
         [HttpGet("{projectId:guid}")]
         public async Task<IActionResult> GetProject([FromRoute] Guid projectId)
         {
