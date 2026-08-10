@@ -13,9 +13,5 @@ namespace CentralSync.API.Models.DTO
         public DateTime? EndDate { get; set; }
 
         public ProjectStatus Status { get; set; }
-
-        public bool IsArchived { get; set; }
-
-        public DateTime? ArchivedAt { get; set; }
     }
 }

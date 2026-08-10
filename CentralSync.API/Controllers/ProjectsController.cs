@@ -131,5 +131,23 @@ namespace CentralSync.API.Controllers
             await _projectRepository.UpdateAsync(projectDomainModel);
             return Ok();
         }
+
+        [HttpPatch("{projectId:guid}/archive")]
+        public async Task<IActionResult> ArchiveProject([FromRoute] Guid projectId, [FromBody] ArchiveProjectRequestDto request)
+        {
+            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+
+            if (projectDomainModel == null)
+            {
+                return NotFound();
+            }
+
+            projectDomainModel.IsArchived = request.IsArchived;
+            projectDomainModel.ArchivedAt = request.IsArchived ? DateTime.UtcNow : null;
+
+            await _projectRepository.UpdateAsync(projectDomainModel);
+
+            return NoContent();
+        }
     }
 }
