@@ -24,6 +24,31 @@ namespace CentralSync.API.Controllers
             _currentUserService = currentUserService;
         }
 
+        [HttpGet("{projectId:guid}")]
+        public async Task<IActionResult> GetProject([FromRoute] Guid projectId)
+        {
+            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+
+            if (projectDomainModel == null) { return NotFound("Project not found"); }
+
+            var projectDto = new ProjectDto()
+            {
+                Id = projectDomainModel.Id,
+                Name = projectDomainModel.Name,
+                Description = projectDomainModel.Description,
+                StartDate = projectDomainModel.StartDate,
+                EndDate = projectDomainModel.EndDate,
+                Status = projectDomainModel.Status,
+                ArchivedAt = projectDomainModel.ArchivedAt,
+                CreatedAt = projectDomainModel.CreatedAt,
+                IsArchived = projectDomainModel.IsArchived,
+                OwnerId = projectDomainModel.OwnerId,
+                UpdatedAt = projectDomainModel.UpdatedAt,
+            };
+
+            return Ok(projectDto);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddProject([FromBody] CreateProjectRequestDto project)
         {
@@ -77,6 +102,11 @@ namespace CentralSync.API.Controllers
 
         public async Task<IActionResult> AddMemberToProject([FromRoute] Guid projectId, [FromBody] AddProjectMemberRequestDto request)
         {
+            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+
+            if (projectDomainModel == null) { return NotFound("Project not found"); }
+            if (projectDomainModel.IsArchived) { return BadRequest("The project is archived."); }
+
             var projectMemberDomain = new ProjectMember()
             {
                 ProjectId = projectId,
@@ -119,6 +149,9 @@ namespace CentralSync.API.Controllers
 
             var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
 
+            if (projectDomainModel == null) { return NotFound("Project not found"); }
+            if (projectDomainModel.IsArchived) { return BadRequest("The project is archived."); }
+
             if (projectDomainModel == null) { 
             return BadRequest();
             }
@@ -144,6 +177,20 @@ namespace CentralSync.API.Controllers
 
             projectDomainModel.IsArchived = request.IsArchived;
             projectDomainModel.ArchivedAt = request.IsArchived ? DateTime.UtcNow : null;
+
+            await _projectRepository.UpdateAsync(projectDomainModel);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{projectId:guid}")]
+        public async Task<IActionResult> DeleteProject([FromRoute] Guid projectId)
+        {
+            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+
+            if (projectDomainModel == null) { return NotFound("Project not found"); }
+
+            projectDomainModel.IsDeleted = true;
 
             await _projectRepository.UpdateAsync(projectDomainModel);
 

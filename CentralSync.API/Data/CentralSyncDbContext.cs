@@ -21,6 +21,8 @@ namespace CentralSync.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Project>().HasQueryFilter(p => !p.IsDeleted);
+
             modelBuilder.Entity<ProjectMember>()
                 .HasIndex(pm => new { pm.ProjectId, pm.UserId })
                 .IsUnique();
