@@ -11,12 +11,14 @@ namespace CentralSync.API.Services.Concrete
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IProjectRepository _projectRepository;
+        private readonly ITaskHistoryRepository _taskHistoryRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository, ICurrentUserService currentUserService)
+        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository, ITaskHistoryRepository taskHistoryRepository,ICurrentUserService currentUserService)
         {
             _taskRepository = taskRepository;
             _projectRepository = projectRepository;
+            _taskHistoryRepository = taskHistoryRepository;
             _currentUserService = currentUserService;
         }
         public async Task<TaskDto> CreateTaskAsync(CreateTaskRequestDto request)
@@ -178,6 +180,8 @@ namespace CentralSync.API.Services.Concrete
                 throw new UnauthorizedAccessException("You do not have permission to change the status of this task.");
             }
 
+            var oldStatus = task.Status.ToString();
+
             task.Status = status;
 
             if (status == ProjectTaskStatus.Done)
@@ -190,7 +194,40 @@ namespace CentralSync.API.Services.Concrete
             }
 
             await _taskRepository.UpdateAsync(task);
+
+            if (oldStatus != status.ToString())
+            {
+                var historyRecord = new TaskHistory
+                {
+                    TaskId = task.Id,
+                    ChangedByUserId = _currentUserService.UserId,
+                    ChangeType = TaskHistoryChangeType.StatusChanged,
+                    OldValue = oldStatus,
+                    NewValue = status.ToString(),
+                    Description = $"Task status changed from {oldStatus} to {status}",
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _taskHistoryRepository.AddAsync(historyRecord);
+            }
+
             return true;
+        }
+        public async Task<List<TaskHistoryDto>> GetTaskHistoriesAsync(Guid taskId)
+        {
+            var histories = await _taskHistoryRepository.GetByTaskIdAsync(taskId);
+
+            return histories.Select(h => new TaskHistoryDto
+            {
+                Id = h.Id,
+                TaskId = h.TaskId,
+                ChangedByUserId = h.ChangedByUserId,
+                ChangeType = h.ChangeType,
+                OldValue = h.OldValue,
+                NewValue = h.NewValue,
+                Description = h.Description,
+                CreatedAt = h.CreatedAt
+            }).ToList();
         }
     }
 }

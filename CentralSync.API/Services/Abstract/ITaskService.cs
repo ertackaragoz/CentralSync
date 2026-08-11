@@ -11,5 +11,6 @@ namespace CentralSync.API.Services.Abstract
         Task<bool> UpdateTaskAsync(Guid taskId, UpdateTaskRequestDto request);
         Task<bool> DeleteTaskAsync(Guid taskId);
         Task<bool> UpdateTaskStatusAsync(Guid taskId, ProjectTaskStatus status);
+        Task<List<TaskHistoryDto>> GetTaskHistoriesAsync(Guid taskId);
     }
 }

@@ -33,6 +33,13 @@ namespace CentralSync.API.Controllers
             return Ok(task);
         }
 
+        [HttpGet("{taskId:guid}/histories")]
+        public async Task<IActionResult> GetTaskHistories([FromRoute] Guid taskId)
+        {
+            var histories = await _taskService.GetTaskHistoriesAsync(taskId);
+            return Ok(histories);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] CreateTaskRequestDto request)
         {
