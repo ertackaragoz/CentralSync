@@ -1,11 +1,6 @@
-﻿using CentralSync.API.Data;
-using Microsoft.AspNetCore.Http;
+﻿using CentralSync.API.Models.DTO;
+using CentralSync.API.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using CentralSync.API.Models.DTO;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace CentralSync.API.Controllers
 {
@@ -13,45 +8,39 @@ namespace CentralSync.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly CentralSyncDbContext _dbContext;
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
 
-        public AuthController(CentralSyncDbContext dbContext, IConfiguration configuration)
+        public AuthController(IAuthService authService)
         {
-            _dbContext = dbContext;
-            _configuration = configuration;
+            _authService = authService;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
+        {
+            try
+            {
+                var response = await _authService.RegisterAsync(request);
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequestDto request)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.Email == request.Email && u.PasswordHash == request.Password);
-
-            if (user == null) { 
-            return Unauthorized("Hatalı giriş");
+            try
+            {
+                var response = await _authService.LoginAsync(request);
+                return Ok(response);
             }
-
-            var claims = new List<Claim> { 
-            
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
-                signingCredentials: credentials);
-
-            var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return Ok(new { Token = jwtToken });
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
     }
 }
