@@ -23,6 +23,7 @@ namespace CentralSync.API.Data
 
             modelBuilder.Entity<Project>().HasQueryFilter(p => !p.IsDeleted);
             modelBuilder.Entity<ProjectTask>().HasQueryFilter(t => !t.IsDeleted);
+            modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
 
             modelBuilder.Entity<ProjectMember>()
                 .HasIndex(pm => new { pm.ProjectId, pm.UserId })
