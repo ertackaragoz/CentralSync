@@ -6,5 +6,7 @@ namespace CentralSync.API.Services.Abstract
     {
         Guid UserId { get; }
         UserRole Role { get; }
+        string FullName {  get; }
+
     }
 }

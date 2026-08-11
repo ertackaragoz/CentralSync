@@ -7,5 +7,6 @@ namespace CentralSync.API.Services.Concrete
     {
         public Guid UserId => new Guid("07AB2AE5-84E1-4585-62C9-08DEF1D68828");
         public UserRole Role => UserRole.Admin;
+        public string FullName => new string("Ertaç Karagöz");
     }
 }

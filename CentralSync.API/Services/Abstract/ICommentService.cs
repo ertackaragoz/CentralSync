@@ -6,8 +6,8 @@ namespace CentralSync.API.Services.Abstract
     public interface ICommentService
     {
         Task<List<CommentDto>> GetByTaskIdAsync(Guid taskId);
-        Task<CommentDto> AddCommentAsync(Comment comment, CreateCommentRequestDto request);
-        Task<bool> UpdateCommentAsync(Comment comment, UpdateCommentRequestDto request);
+        Task<CommentDto> AddCommentAsync(Guid taskId, CreateCommentRequestDto request);
+        Task<bool> UpdateCommentAsync(Guid commentId, UpdateCommentRequestDto request);
         Task<bool> DeleteCommentAsync(Guid commentId);
 
     }
