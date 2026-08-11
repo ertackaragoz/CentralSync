@@ -5,7 +5,7 @@ namespace CentralSync.API.Repositories.Abstract
 {
     public interface ITaskRepository
     {
-        Task<IEnumerable<ProjectTask>> GetAllTasksAsync(int page=1, int pageSize = 10, Guid? projectId=null, ProjectTaskStatus? status = null, ProjectTaskPriority? priority = null);
+        Task<IEnumerable<ProjectTask>> GetAllTasksAsync(Guid? projectId, Guid? assignedToUserId, ProjectTaskStatus? status, ProjectTaskPriority? priority, DateTime? dueBefore, DateTime? dueAfter, string? sortBy, string? sortDirection, int page, int pageSize);
         Task<ProjectTask?> GetByIdAsync(Guid taskId);
         Task<ProjectTask> CreateAsync(ProjectTask task);
         Task<ProjectTask> UpdateAsync(ProjectTask task);

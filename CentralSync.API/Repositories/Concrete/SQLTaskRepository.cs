@@ -21,7 +21,7 @@ namespace CentralSync.API.Repositories.Concrete
             return task;
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetAllTasksAsync(int page = 1, int pageSize = 10, Guid? projectId = null, ProjectTaskStatus? status = null, ProjectTaskPriority? priority = null)
+        public async Task<IEnumerable<ProjectTask>> GetAllTasksAsync(Guid? projectId, Guid? assignedToUserId, ProjectTaskStatus? status, ProjectTaskPriority? priority, DateTime? dueBefore, DateTime? dueAfter, string? sortBy, string? sortDirection, int page, int pageSize)
         {
             var tasks = _dbcontext.Tasks.AsQueryable();
 
