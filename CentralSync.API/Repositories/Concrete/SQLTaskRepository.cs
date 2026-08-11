@@ -52,7 +52,10 @@ namespace CentralSync.API.Repositories.Concrete
             var skipAmount = (page - 1) * pageSize;
             return await query.Skip(skipAmount).Take(pageSize).ToListAsync();
         }
-
+        public async Task<bool> IsUserActiveMemberAsync(Guid projectId, Guid userId)
+        {
+            return await _dbcontext.ProjectMembers.AnyAsync(pm => pm.ProjectId == projectId && pm.UserId == userId && pm.IsActive);
+        }
         public async Task<ProjectTask?> GetByIdAsync(Guid taskId)
         {
             return await _dbcontext.Tasks.FindAsync(taskId);

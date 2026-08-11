@@ -12,7 +12,7 @@ namespace CentralSync.API.Repositories.Abstract
         Task<Project?> GetByIdAsync(Guid id);
 
         Task<ProjectMember> AddMemberToProjectAsync(ProjectMember member);
-
+        Task<bool> IsUserActiveMemberAsync(Guid projectId, Guid userId);
         Task<Project> UpdateAsync(Project project);
     }
 }
