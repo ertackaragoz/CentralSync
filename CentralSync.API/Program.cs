@@ -30,6 +30,7 @@ builder.Services.AddDbContext<CentralSyncDbContext>(options =>
 
 builder.Services.AddScoped<IProjectRepository, SQLProjectRepository>();
 builder.Services.AddScoped<ITaskRepository, SQLTaskRepository>();
+builder.Services.AddScoped<ITaskHistoryRepository, SQLTaskHistoryRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
