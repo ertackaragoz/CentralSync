@@ -47,6 +47,11 @@ namespace CentralSync.API.Repositories.Concrete
             return await _dbcontext.Projects.FindAsync(id);
         }
 
+        public async Task<bool> IsUserActiveMemberAsync(Guid projectId, Guid userId)
+        {
+            return await _dbcontext.ProjectMembers.AnyAsync(pm => pm.ProjectId == projectId && pm.UserId == userId && pm.IsActive);
+        }
+
         public async Task<Project> UpdateAsync(Project project)
         {
             await _dbcontext.SaveChangesAsync();

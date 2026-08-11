@@ -20,7 +20,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddScoped<ICurrentUserService, MockCurrentUserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
-
+builder.Services.AddScoped<ITaskService, TaskService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -29,6 +29,7 @@ builder.Services.AddDbContext<CentralSyncDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CentralSyncConnectionString")));
 
 builder.Services.AddScoped<IProjectRepository, SQLProjectRepository>();
+builder.Services.AddScoped<ITaskRepository, SQLTaskRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
