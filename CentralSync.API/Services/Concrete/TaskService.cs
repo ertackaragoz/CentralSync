@@ -131,38 +131,89 @@ namespace CentralSync.API.Services.Concrete
         {
             if (request.EstimatedHours < 0) throw new ArgumentException("Estimated hours cannot be negative.");
 
-            var taskDomainModel = await _taskRepository.GetByIdAsync(taskId);
-            if (taskDomainModel == null) { return false; }
+            var task = await _taskRepository.GetByIdAsync(taskId);
+            if (task == null) return false;
 
-            var projectDomainModel = await _projectRepository.GetByIdAsync(taskDomainModel.ProjectId);
-            if (projectDomainModel == null) { return false;}
+            var project = await _projectRepository.GetByIdAsync(task.ProjectId);
+            if (project == null) return false;
 
-            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId)
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
             {
                 throw new UnauthorizedAccessException("Only the project owner or an admin can update this task.");
             }
 
-            if (request.DueDate.HasValue && request.DueDate.Value.Date < projectDomainModel.StartDate.Date)
+            if (request.DueDate.HasValue && request.DueDate.Value.Date < project.StartDate.Date)
             {
                 throw new ArgumentException("Due date cannot be before the project start date.");
             }
 
-            if (request.AssignedToUserId.HasValue)
+            if (request.AssignedToUserId.HasValue && request.AssignedToUserId != task.AssignedToUserId)
             {
-                bool isMember = await _projectRepository.IsUserActiveMemberAsync(taskDomainModel.ProjectId, request.AssignedToUserId.Value);
+                bool isMember = await _projectRepository.IsUserActiveMemberAsync(task.ProjectId, request.AssignedToUserId.Value);
                 if (!isMember) throw new InvalidOperationException("The assigned user must be an active member of the project.");
             }
 
-            taskDomainModel.Title = request.Title;
-            taskDomainModel.Description = request.Description;
-            taskDomainModel.AssignedToUserId = request.AssignedToUserId;
-            taskDomainModel.Priority = request.Priority;
-            taskDomainModel.DueDate = request.DueDate;
-            taskDomainModel.EstimatedHours = request.EstimatedHours;
+            var historyRecords = new List<TaskHistory>();
 
-            await _taskRepository.UpdateAsync(taskDomainModel);
+            if (task.Title != request.Title)
+            {
+                historyRecords.Add(CreateHistoryRecord(task.Id, TaskHistoryChangeType.TitleChanged, task.Title, request.Title));
+            }
+
+            if (task.Description != request.Description)
+            {
+                historyRecords.Add(CreateHistoryRecord(task.Id, TaskHistoryChangeType.DescriptionChanged, task.Description, request.Description));
+            }
+
+            if (task.AssignedToUserId != request.AssignedToUserId)
+            {
+                historyRecords.Add(CreateHistoryRecord(task.Id, TaskHistoryChangeType.AssignedUserChanged, task.AssignedToUserId?.ToString(), request.AssignedToUserId?.ToString()));
+            }
+
+            if (task.Priority != request.Priority)
+            {
+                historyRecords.Add(CreateHistoryRecord(task.Id, TaskHistoryChangeType.PriorityChanged, task.Priority.ToString(), request.Priority.ToString()));
+            }
+
+            if (task.DueDate != request.DueDate)
+            {
+                historyRecords.Add(CreateHistoryRecord(task.Id, TaskHistoryChangeType.DueDateChanged, task.DueDate?.ToString("yyyy-MM-dd"), request.DueDate?.ToString("yyyy-MM-dd")));
+            }
+
+            if (task.EstimatedHours != request.EstimatedHours)
+            {
+                historyRecords.Add(CreateHistoryRecord(task.Id, TaskHistoryChangeType.EstimatedHoursChanged, task.EstimatedHours?.ToString(), request.EstimatedHours?.ToString()));
+            }
+
+            task.Title = request.Title;
+            task.Description = request.Description;
+            task.AssignedToUserId = request.AssignedToUserId;
+            task.Priority = request.Priority;
+            task.DueDate = request.DueDate;
+            task.EstimatedHours = request.EstimatedHours;
+
+            await _taskRepository.UpdateAsync(task);
+
+            foreach (var record in historyRecords)
+            {
+                await _taskHistoryRepository.AddAsync(record);
+            }
 
             return true;
+        }
+
+        private TaskHistory CreateHistoryRecord(Guid taskId, TaskHistoryChangeType changeType, string? oldValue, string? newValue)
+        {
+            return new TaskHistory
+            {
+                TaskId = taskId,
+                ChangedByUserId = _currentUserService.UserId,
+                ChangeType = changeType,
+                OldValue = oldValue,
+                NewValue = newValue,
+                Description = $"{changeType} modified.",
+                CreatedAt = DateTime.UtcNow
+            };
         }
 
         public async Task<bool> UpdateTaskStatusAsync(Guid taskId, ProjectTaskStatus status)
