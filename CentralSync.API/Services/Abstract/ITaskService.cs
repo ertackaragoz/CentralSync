@@ -10,6 +10,6 @@ namespace CentralSync.API.Services.Abstract
         Task<TaskDto> CreateTaskAsync(CreateTaskRequestDto request);
         Task<bool> UpdateTaskAsync(Guid taskId, UpdateTaskRequestDto request);
         Task<bool> DeleteTaskAsync(Guid taskId);
-        Task<bool> UpdateTaskStatusAsync(Guid taskId, TaskStatus status);
+        Task<bool> UpdateTaskStatusAsync(Guid taskId, ProjectTaskStatus status);
     }
 }

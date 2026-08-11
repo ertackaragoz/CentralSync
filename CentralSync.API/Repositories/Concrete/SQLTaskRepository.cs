@@ -23,26 +23,34 @@ namespace CentralSync.API.Repositories.Concrete
 
         public async Task<IEnumerable<ProjectTask>> GetAllTasksAsync(Guid? projectId, Guid? assignedToUserId, ProjectTaskStatus? status, ProjectTaskPriority? priority, DateTime? dueBefore, DateTime? dueAfter, string? sortBy, string? sortDirection, int page, int pageSize)
         {
-            var tasks = _dbcontext.Tasks.AsQueryable();
+            var query = _dbcontext.Tasks.AsQueryable();
 
-            if (projectId.HasValue)
+            if (projectId.HasValue) query = query.Where(t => t.ProjectId == projectId.Value);
+            if (assignedToUserId.HasValue) query = query.Where(t => t.AssignedToUserId == assignedToUserId.Value);
+            if (status.HasValue) query = query.Where(t => t.Status == status.Value);
+            if (priority.HasValue) query = query.Where(t => t.Priority == priority.Value);
+            if (dueBefore.HasValue) query = query.Where(t => t.DueDate <= dueBefore.Value);
+            if (dueAfter.HasValue) query = query.Where(t => t.DueDate >= dueAfter.Value);
+
+            if (string.IsNullOrWhiteSpace(sortBy) == false)
             {
-                tasks = tasks.Where(x => x.Id == projectId.Value);
+                var isDesc = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+
+                query = sortBy.ToLower() switch
+                {
+                    "duedate" => isDesc ? query.OrderByDescending(t => t.DueDate) : query.OrderBy(t => t.DueDate),
+                    "priority" => isDesc ? query.OrderByDescending(t => t.Priority) : query.OrderBy(t => t.Priority),
+                    "createdat" => isDesc ? query.OrderByDescending(t => t.CreatedAt) : query.OrderBy(t => t.CreatedAt),
+                    _ => isDesc ? query.OrderByDescending(t => t.Title) : query.OrderBy(t => t.Title)
+                };
             }
-
-            if (status.HasValue)
+            else
             {
-                tasks = tasks.Where(x => x.Status == status.Value);
-            }
-
-            if (priority.HasValue)
-            {
-                tasks = tasks.Where(x => x.Priority == priority.Value);
+                query = query.OrderByDescending(t => t.CreatedAt);
             }
 
             var skipAmount = (page - 1) * pageSize;
-
-            return await tasks.Skip(skipAmount).Take(pageSize).ToListAsync();
+            return await query.Skip(skipAmount).Take(pageSize).ToListAsync();
         }
 
         public async Task<ProjectTask?> GetByIdAsync(Guid taskId)
