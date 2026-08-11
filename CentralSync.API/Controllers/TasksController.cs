@@ -1,11 +1,13 @@
 ﻿using CentralSync.API.Models.Domain.Enums;
 using CentralSync.API.Models.DTO;
 using CentralSync.API.Services.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CentralSync.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TasksController : ControllerBase

@@ -5,6 +5,7 @@ using CentralSync.API.Models.Domain.Enums;
 using CentralSync.API.Models.DTO;
 using CentralSync.API.Repositories.Abstract;
 using CentralSync.API.Services.Abstract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CentralSync.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
@@ -46,6 +48,7 @@ namespace CentralSync.API.Controllers
             return Ok(projectMembersDto);
         }
 
+        [Authorize(Roles = "Admin,ProjectManager")]
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDto request)
         {
