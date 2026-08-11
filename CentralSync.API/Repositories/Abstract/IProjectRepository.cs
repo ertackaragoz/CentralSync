@@ -8,6 +8,7 @@ namespace CentralSync.API.Repositories.Abstract
     {
         Task<List<Project>> GetAllProjectsAsync(int page=1,int pageSize=10,ProjectStatus? status=null);
         Task<Project> AddProjectAsync(Project project);
+        Task<List<ProjectMember>> GetProjectMembersAsync(Guid id, ProjectMemberRole? role);
 
         Task<Project?> GetByIdAsync(Guid id);
 

@@ -39,6 +39,13 @@ namespace CentralSync.API.Controllers
             return Ok(projectDto);
         }
 
+        [HttpGet("{projectId:guid}/members")]
+        public async Task<IActionResult> GetProjectMembers([FromRoute] Guid projectId, ProjectMemberRole? role)
+        {
+            var projectMembersDto = await _projectService.GetProjectMembersAsync(projectId, role);
+            return Ok(projectMembersDto);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDto request)
         {

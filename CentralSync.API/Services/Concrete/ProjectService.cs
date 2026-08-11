@@ -184,5 +184,22 @@ namespace CentralSync.API.Services.Concrete
             return true;
         }
 
+        public async Task<List<ProjectMemberDto>> GetProjectMembersAsync(Guid id, ProjectMemberRole? role)
+        {
+            var members = await _projectRepository.GetProjectMembersAsync(id, role);
+            if (members == null) return null;
+
+            var dtoList = members.Select(pm => new ProjectMemberDto
+            {
+                Id = pm.Id,
+                ProjectId = pm.ProjectId,
+                UserId = pm.UserId,
+                Role = pm.Role,
+                JoinedAt = pm.JoinedAt,
+                IsActive = pm.IsActive,
+            }).ToList();
+
+            return dtoList;
+        }
     }
 }

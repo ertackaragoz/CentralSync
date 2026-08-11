@@ -42,6 +42,21 @@ namespace CentralSync.API.Repositories.Concrete
             return await projects.Skip(skipAmount).Take(pageSize).ToListAsync();
         }
 
+        public async Task<List<ProjectMember>> GetProjectMembersAsync(Guid id, ProjectMemberRole? role)
+        {
+            var projectExists = await _dbcontext.Projects.AnyAsync(p => p.Id == id);
+            if (!projectExists) return null;
+
+            var query = _dbcontext.ProjectMembers.AsQueryable().Where(pm => pm.ProjectId == id);
+
+            if (role.HasValue)
+            {
+                query = query.Where(pm => pm.Role == role.Value);
+            }
+
+            return await query.Include(pm => pm.User).ToListAsync();
+        }
+
         public async Task<Project?> GetByIdAsync(Guid id)
         {
             return await _dbcontext.Projects.FindAsync(id);
