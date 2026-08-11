@@ -40,8 +40,12 @@ namespace CentralSync.API.Services.Concrete
 
             if (request.AssignedToUserId.HasValue)
             {
-                bool isMember = await _projectRepository.IsUserActiveMemberAsync(request.ProjectId, request.AssignedToUserId.Value);
-                if (!isMember) throw new InvalidOperationException("The assigned user must be an active member of the project.");
+                var assignedUserRole = await _projectRepository.GetUserRoleInProjectAsync(request.ProjectId, request.AssignedToUserId.Value);
+
+                if (assignedUserRole == null)
+                {
+                    throw new InvalidOperationException("The assigned user must be an active member of the project.");
+                }
             }
 
             var task = new ProjectTask
@@ -137,9 +141,19 @@ namespace CentralSync.API.Services.Concrete
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
             if (project == null) return false;
 
-            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
+            if (project.OwnerId != _currentUserService.UserId)
             {
-                throw new UnauthorizedAccessException("Only the project owner or an admin can update this task.");
+                var userRoleInProject = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
+
+                if (userRoleInProject == null)
+                {
+                    throw new UnauthorizedAccessException("You must be an active member of this project to update tasks.");
+                }
+
+                if (userRoleInProject == ProjectMemberRole.Viewer)
+                {
+                    throw new UnauthorizedAccessException("Viewers cannot update tasks.");
+                }
             }
 
             if (request.DueDate.HasValue && request.DueDate.Value.Date < project.StartDate.Date)
@@ -149,8 +163,12 @@ namespace CentralSync.API.Services.Concrete
 
             if (request.AssignedToUserId.HasValue && request.AssignedToUserId != task.AssignedToUserId)
             {
-                bool isMember = await _projectRepository.IsUserActiveMemberAsync(task.ProjectId, request.AssignedToUserId.Value);
-                if (!isMember) throw new InvalidOperationException("The assigned user must be an active member of the project.");
+                var assignedUserRole = await _projectRepository.GetUserRoleInProjectAsync(task.ProjectId, request.AssignedToUserId.Value);
+
+                if (assignedUserRole == null)
+                {
+                    throw new InvalidOperationException("The assigned user must be an active member of the project.");
+                }
             }
 
             var historyRecords = new List<TaskHistory>();

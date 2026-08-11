@@ -28,13 +28,20 @@ namespace CentralSync.API.Services.Concrete
 
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
 
-            if (_currentUserService.Role != UserRole.Admin && _currentUserService.UserId != project.OwnerId)
+            if (project.OwnerId != _currentUserService.UserId)
             {
-                bool isMember = await _projectRepository.IsUserActiveMemberAsync(project.Id, _currentUserService.UserId);
-                if (!isMember) throw new UnauthorizedAccessException("You must be an active member of this project to comment.");
+                var userRoleInProject = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
 
+                if (userRoleInProject == null)
+                {
+                    throw new UnauthorizedAccessException("You must be an active member of this project to comment.");
+                }
+
+                if (userRoleInProject == ProjectMemberRole.Viewer)
+                {
+                    throw new UnauthorizedAccessException("Viewers cannot add comments to tasks.");
+                }
             }
-
             var comment = new Comment
             {
                 Content = request.Content,
@@ -52,7 +59,7 @@ namespace CentralSync.API.Services.Concrete
                 TaskId = createdComment.TaskId,
                 UserId = createdComment.UserId,
                 UserName = _currentUserService.FullName,
-                CreatedAt = createdComment.CreatedAt // DbContext'teki override sayesinde bu da dolu gelecek
+                CreatedAt = createdComment.CreatedAt
             };
         }
 
