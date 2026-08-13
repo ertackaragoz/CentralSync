@@ -22,9 +22,25 @@ namespace CentralSync.API.Repositories.Concrete
             return user;
         }
 
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _dbcontext.Users.ToListAsync();
+        }
+
         public async Task<User> GetByEmailAsync(string email)
         {
             return await _dbcontext.Users.FirstOrDefaultAsync(th => th.Email == email);
+        }
+
+        public async Task<User> GetByIdAsync(Guid id)
+        {
+            return await _dbcontext.Users.FindAsync(id);
+        }
+
+        public async Task<User> UpdateAsync(User user)
+        {
+            await _dbcontext.SaveChangesAsync();
+            return user;
         }
     }
 }
