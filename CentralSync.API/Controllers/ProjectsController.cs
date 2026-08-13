@@ -52,63 +52,39 @@ namespace CentralSync.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequestDto request)
         {
-            try
-            {
-                var projectDto = await _projectService.CreateProjectAsync(request);
-                return Ok(projectDto);
-            }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
+            var projectDto = await _projectService.CreateProjectAsync(request);
+            return Ok(projectDto);
         }
 
         [HttpPost("{projectId:guid}/members")]
         public async Task<IActionResult> AddMemberToProject([FromRoute] Guid projectId, [FromBody] AddProjectMemberRequestDto request)
         {
-            try
-            {
-                var projectMemberDto = await _projectService.AddMemberToProjectAsync(projectId, request);
-                return Ok(projectMemberDto);
-            }
-            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
-            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+            var projectMemberDto = await _projectService.AddMemberToProjectAsync(projectId, request);
+            return Ok(projectMemberDto);
         }
 
         [HttpPut("{projectId:guid}")]
         public async Task<IActionResult> UpdateProject([FromRoute] Guid projectId, [FromBody] UpdateProjectRequestDto request)
         {
-            try
-            {
-                var result = await _projectService.UpdateProjectAsync(projectId, request);
-                if (result == false) return NotFound();
-                return NoContent();
-            }
-            catch (UnauthorizedAccessException ex) { return StatusCode(StatusCodes.Status403Forbidden, ex.Message); }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
-            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+            var result = await _projectService.UpdateProjectAsync(projectId, request);
+            if (result == false) return NotFound();
+            return NoContent();
         }
 
         [HttpPatch("{projectId:guid}/archive")]
         public async Task<IActionResult> ArchiveProject([FromRoute] Guid projectId, [FromBody] ArchiveProjectRequestDto request)
         {
-            try
-            {
-                var result = await _projectService.ArchiveProjectAsync(projectId, request);
-                if (result == false) return NotFound();
-
-                return NoContent();
-            }
-            catch (UnauthorizedAccessException ex) { return StatusCode(StatusCodes.Status403Forbidden, ex.Message); }
+            var result = await _projectService.ArchiveProjectAsync(projectId, request);
+            if (result == false) return NotFound();
+            return NoContent();
         }
 
         [HttpDelete("{projectId:guid}")]
         public async Task<IActionResult> DeleteProject([FromRoute] Guid projectId)
         {
-            try
-            {
-                var result = await _projectService.DeleteProjectAsync(projectId);
-                if (result == false) return NotFound("Project not found");
-                return NoContent();
-            }
-            catch (UnauthorizedAccessException ex) { return StatusCode(StatusCodes.Status403Forbidden, ex.Message); }
+            var result = await _projectService.DeleteProjectAsync(projectId);
+            if (result == false) return NotFound("Project not found");
+            return NoContent();
         }
     }
 }

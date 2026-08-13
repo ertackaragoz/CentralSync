@@ -30,7 +30,6 @@ namespace CentralSync.API.Controllers
         {
             var result = await _userService.ToggleUserStatusAsync(userId);
             if (!result) return NotFound("User not found.");
-
             return NoContent();
         }
 
@@ -39,7 +38,6 @@ namespace CentralSync.API.Controllers
         {
             var result = await _userService.ChangeUserRoleAsync(userId, request.Role);
             if (!result) return NotFound("User not found.");
-
             return NoContent();
         }
 

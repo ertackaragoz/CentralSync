@@ -31,7 +31,6 @@ namespace CentralSync.API.Controllers
         {
             var task = await _taskService.GetTaskByIdAsync(taskId);
             if (task == null) return NotFound("Task not found.");
-
             return Ok(task);
         }
 
@@ -45,56 +44,32 @@ namespace CentralSync.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] CreateTaskRequestDto request)
         {
-            try
-            {
-                var task = await _taskService.CreateTaskAsync(request);
-                return Ok(task);
-            }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
-            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
-            catch (UnauthorizedAccessException ex) { return StatusCode(403, ex.Message); }
-            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+            var task = await _taskService.CreateTaskAsync(request);
+            return Ok(task);
         }
 
         [HttpPut("{taskId:guid}")]
         public async Task<IActionResult> UpdateTask([FromRoute] Guid taskId, [FromBody] UpdateTaskRequestDto request)
         {
-            try
-            {
-                var result = await _taskService.UpdateTaskAsync(taskId, request);
-                if (!result) return NotFound("Task not found.");
-
-                return NoContent();
-            }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
-            catch (UnauthorizedAccessException ex) { return StatusCode(403, ex.Message); }
-            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+            var result = await _taskService.UpdateTaskAsync(taskId, request);
+            if (!result) return NotFound("Task not found.");
+            return NoContent();
         }
 
         [HttpPatch("{taskId:guid}/status")]
         public async Task<IActionResult> UpdateTaskStatus([FromRoute] Guid taskId, [FromBody] ProjectTaskStatus status)
         {
-            try
-            {
-                var result = await _taskService.UpdateTaskStatusAsync(taskId, status);
-                if (!result) return NotFound("Task not found.");
-
-                return NoContent();
-            }
-            catch (UnauthorizedAccessException ex) { return StatusCode(403, ex.Message); }
+            var result = await _taskService.UpdateTaskStatusAsync(taskId, status);
+            if (!result) return NotFound("Task not found.");
+            return NoContent();
         }
 
         [HttpDelete("{taskId:guid}")]
         public async Task<IActionResult> DeleteTask([FromRoute] Guid taskId)
         {
-            try
-            {
-                var result = await _taskService.DeleteTaskAsync(taskId);
-                if (!result) return NotFound("Task not found.");
-
-                return NoContent();
-            }
-            catch (UnauthorizedAccessException ex) { return StatusCode(403, ex.Message); }
+            var result = await _taskService.DeleteTaskAsync(taskId);
+            if (!result) return NotFound("Task not found.");
+            return NoContent();
         }
     }
 }

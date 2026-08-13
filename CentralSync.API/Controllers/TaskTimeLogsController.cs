@@ -28,14 +28,8 @@ namespace CentralSync.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTimeLog([FromRoute]Guid taskId, [FromBody]CreateTaskTimeLogRequestDto request)
         {
-            try
-            {
-                var timeLog = await _taskTimeLogService.AddTaskTimeLogAsync(taskId, request);
-                return Ok(timeLog);
-            }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
-            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
-            catch (UnauthorizedAccessException ex) { return StatusCode(403, ex.Message); }
+            var timeLog = await _taskTimeLogService.AddTaskTimeLogAsync(taskId, request);
+            return Ok(timeLog);
         }
     }
 }

@@ -1,4 +1,5 @@
 using CentralSync.API.Data;
+using CentralSync.API.Middlewares;
 using CentralSync.API.Repositories.Abstract;
 using CentralSync.API.Repositories.Concrete;
 using CentralSync.API.Services.Abstract;
@@ -90,6 +91,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
