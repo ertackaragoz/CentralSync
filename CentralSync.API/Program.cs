@@ -24,6 +24,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITaskTimeLogService, TaskTimeLogService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -63,6 +64,7 @@ builder.Services.AddScoped<ITaskRepository, SQLTaskRepository>();
 builder.Services.AddScoped<ITaskHistoryRepository, SQLTaskHistoryRepository>();
 builder.Services.AddScoped<ICommentRepository, SQLCommentRepository>();
 builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
+builder.Services.AddScoped<ITaskTimeLogRepository, SQLTaskTimeLogRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

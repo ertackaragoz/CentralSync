@@ -10,7 +10,7 @@ namespace CentralSync.API.Services.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<TaskTimeLogDto>> GetTaskTimeLogsByTaskIdAsync(Guid taskId)
+        public Task<List<TaskTimeLogDto>> GetTaskTimeLogsByTaskIdAsync(Guid taskId)
         {
             throw new NotImplementedException();
         }
