@@ -10,12 +10,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions; 
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using CentralSync.API.Filters;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policyBuilder =>
+        policyBuilder.AllowAnyOrigin()
+                     .AllowAnyMethod()
+                     .AllowAnyHeader());
+});
 
 // Add services to the container.
 builder.Services.AddControllers(options =>
@@ -35,11 +43,11 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITaskTimeLogService, TaskTimeLogService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskRequestDtoValidator>();
-
 
 builder.Services.AddFluentValidationAutoValidation();
 
@@ -47,6 +55,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -113,8 +122,9 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseCors("AllowAll");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
