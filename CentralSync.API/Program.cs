@@ -4,21 +4,29 @@ using CentralSync.API.Repositories.Abstract;
 using CentralSync.API.Repositories.Concrete;
 using CentralSync.API.Services.Abstract;
 using CentralSync.API.Services.Concrete;
+using CentralSync.API.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions; 
+using CentralSync.API.Filters;
+using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilterAttribute>();
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
-    });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -30,6 +38,15 @@ builder.Services.AddScoped<IUserService, UserService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskRequestDtoValidator>();
+
+
+builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
