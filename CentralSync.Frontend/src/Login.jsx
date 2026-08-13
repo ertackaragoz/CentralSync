@@ -14,7 +14,7 @@ export default function Login() {
             const response = await api.post('/auth/login', { email, password });
 
             localStorage.setItem('token', response.data.token);
-            window.location.href = '/tasks';
+            window.location.href = '/Projects';
         } catch (err) {
             setError(err.response?.data?.message || 'Giriş başarısız oldu!');
         }
