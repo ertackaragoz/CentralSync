@@ -27,6 +27,8 @@ namespace CentralSync.API.Models.DTO
 
         public decimal? EstimatedHours { get; set; }
 
+        public decimal ActualHours { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

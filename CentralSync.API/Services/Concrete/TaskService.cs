@@ -12,13 +12,15 @@ namespace CentralSync.API.Services.Concrete
         private readonly ITaskRepository _taskRepository;
         private readonly IProjectRepository _projectRepository;
         private readonly ITaskHistoryRepository _taskHistoryRepository;
+        private readonly ITaskTimeLogRepository _taskTimeLogRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository, ITaskHistoryRepository taskHistoryRepository,ICurrentUserService currentUserService)
+        public TaskService(ITaskRepository taskRepository, IProjectRepository projectRepository, ITaskHistoryRepository taskHistoryRepository, ITaskTimeLogRepository taskTimeLogRepository, ICurrentUserService currentUserService)
         {
             _taskRepository = taskRepository;
             _projectRepository = projectRepository;
             _taskHistoryRepository = taskHistoryRepository;
+            _taskTimeLogRepository = taskTimeLogRepository;
             _currentUserService = currentUserService;
         }
         public async Task<TaskDto> CreateTaskAsync(CreateTaskRequestDto request)
@@ -113,6 +115,10 @@ namespace CentralSync.API.Services.Concrete
             var task = await _taskRepository.GetByIdAsync(taskId);
             if (task == null) return null;
 
+            var timeLogs = await _taskTimeLogRepository.GetByTaskIdAsync(taskId);
+
+            var totalActualHours = timeLogs.Sum(log => log.Hours);
+
             return new TaskDto
             {
                 Id = task.Id,
@@ -127,7 +133,8 @@ namespace CentralSync.API.Services.Concrete
                 EstimatedHours = task.EstimatedHours,
                 CreatedAt = task.CreatedAt,
                 UpdatedAt = task.UpdatedAt,
-                CompletedAt = task.CompletedAt
+                CompletedAt = task.CompletedAt,
+                ActualHours = totalActualHours
             };
         }
 
