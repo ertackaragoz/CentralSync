@@ -3,6 +3,46 @@
   "WorkspaceRootPath": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\services\\concrete\\commentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\services\\concrete\\commentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\concrete\\sqlcommentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\repositories\\concrete\\sqlcommentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\updatecommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\updatecommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\createcommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\createcommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\commentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\commentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\services\\concrete\\taskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\services\\concrete\\taskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\projecttask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\projecttask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\concrete\\sqltaskrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\repositories\\concrete\\sqltaskrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\taskdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\taskdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\concrete\\sqlprojectrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\repositories\\concrete\\sqlprojectrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,14 +53,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\services\\concrete\\projectservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\services\\concrete\\projectservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\services\\concrete\\taskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\services\\concrete\\taskservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\commentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\commentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\changeuserrolerequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -63,10 +95,6 @@
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\createtaskrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\createcommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\createcommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\enums\\taskhistorychangetype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\enums\\taskhistorychangetype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -85,10 +113,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\enums\\projecttaskstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\enums\\projecttaskstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\taskdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\taskdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\updatetaskrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -119,10 +143,6 @@
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\controllers\\commentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -145,10 +165,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\concrete\\sqluserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\repositories\\concrete\\sqluserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\concrete\\sqlcommentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\repositories\\concrete\\sqlcommentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\abstract\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -183,10 +199,6 @@
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\services\\abstract\\iprojectservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\repositories\\concrete\\sqltaskrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\repositories\\concrete\\sqltaskrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -205,10 +217,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\taskhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\taskhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\projecttask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\projecttask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\createtasktimelogrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -267,16 +275,8 @@
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\registerrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\services\\concrete\\commentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\services\\concrete\\commentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\domain\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\domain\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\updatecommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|solutionrelative:centralsync.api\\models\\dto\\updatecommentrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C30668D8-FF45-4637-8A51-05F6AF13E397}|CentralSync.API\\CentralSync.API.csproj|c:\\users\\pc\\desktop\\centralsync\\centralsync\\centralsync.api\\models\\dto\\updateprojectrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -298,8 +298,60 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CreateCommentRequestDto.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
+              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T09:01:40.137Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UpdateCommentRequestDto.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
+              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T09:01:57.056Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SQLCommentRepository.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
+              "RelativeToolTip": "CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAiwCsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T09:05:09.016Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CommentService.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\CommentService.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\CommentService.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\CommentService.cs",
+              "RelativeToolTip": "CentralSync.API\\Services\\Concrete\\CommentService.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAuwHAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T09:27:27.962Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 4,
@@ -308,40 +360,40 @@
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\CommentDto.cs",
               "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CommentDto.cs",
               "RelativeToolTip": "CentralSync.API\\Models\\DTO\\CommentDto.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-11T08:13:45.543Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ProjectMemberDto.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
-              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "CommentsController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\CommentsController.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\CommentsController.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\CommentsController.cs",
+              "RelativeToolTip": "CentralSync.API\\Controllers\\CommentsController.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAA6wDIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-07T14:48:10.451Z",
+              "WhenOpened": "2026-08-11T10:31:29.475Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "TaskService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\TaskService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\TaskService.cs",
               "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\TaskService.cs",
               "RelativeToolTip": "CentralSync.API\\Services\\Concrete\\TaskService.cs",
-              "ViewState": "AgIAAF4AAAAAAAAAAAAkwIgAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAABEBAAAAAAAAAAAgwIQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-11T01:53:04.028Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 12,
               "Title": "ProjectService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\ProjectService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\ProjectService.cs",
@@ -354,7 +406,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 7,
+              "Title": "ProjectTask.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\ProjectTask.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\ProjectTask.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\ProjectTask.cs",
+              "RelativeToolTip": "CentralSync.API\\Models\\Domain\\ProjectTask.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAAwCkAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-03T23:21:01.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "SQLProjectRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLProjectRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLProjectRepository.cs",
@@ -367,7 +432,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
+              "Title": "SQLTaskRepository.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
+              "RelativeToolTip": "CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAmwDoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T00:06:52.646Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ProjectMemberDto.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
+              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\ProjectMemberDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-07T14:48:10.451Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "ChangeUserRoleRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ChangeUserRoleRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\ChangeUserRoleRequestDto.cs",
@@ -380,7 +471,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
+              "Title": "TaskDto.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\TaskDto.cs",
+              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\TaskDto.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\TaskDto.cs",
+              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\TaskDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAQwA4AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-10T23:57:22.582Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "AuthResponseDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\AuthResponseDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\AuthResponseDto.cs",
@@ -393,7 +497,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 15,
               "Title": "ArchiveProjectRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ArchiveProjectRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\ArchiveProjectRequestDto.cs",
@@ -406,7 +510,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 16,
               "Title": "AddProjectMemberRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\AddProjectMemberRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\AddProjectMemberRequestDto.cs",
@@ -419,7 +523,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 17,
               "Title": "UserDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\UserDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\UserDto.cs",
@@ -432,7 +536,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 18,
               "Title": "TaskHistoryDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\TaskHistoryDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\TaskHistoryDto.cs",
@@ -445,7 +549,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 19,
               "Title": "ProjectMember.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\ProjectMember.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\ProjectMember.cs",
@@ -458,7 +562,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 20,
               "Title": "ProjectMemberRole.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Enums\\ProjectMemberRole.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Enums\\ProjectMemberRole.cs",
@@ -471,7 +575,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 21,
               "Title": "UsersController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\UsersController.cs",
@@ -484,7 +588,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 24,
               "Title": "Project.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Project.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Project.cs",
@@ -497,20 +601,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "TaskDto.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\TaskDto.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\TaskDto.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\TaskDto.cs",
-              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\TaskDto.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAA1wCYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-10T23:57:22.582Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 28,
               "Title": "UpdateTaskRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\UpdateTaskRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\UpdateTaskRequestDto.cs",
@@ -523,7 +614,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 22,
               "Title": "CreateTaskRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateTaskRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\CreateTaskRequestDto.cs",
@@ -536,7 +627,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 25,
               "Title": "TasksController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\TasksController.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\TasksController.cs",
@@ -549,7 +640,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 29,
               "Title": "UserRole.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Enums\\UserRole.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Enums\\UserRole.cs",
@@ -562,7 +653,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 23,
               "Title": "TaskHistoryChangeType.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Enums\\TaskHistoryChangeType.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Enums\\TaskHistoryChangeType.cs",
@@ -575,20 +666,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "CreateCommentRequestDto.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
-              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\CreateCommentRequestDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T09:01:40.137Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 26,
               "Title": "ProjectTaskPriority.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Enums\\ProjectTaskPriority.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Enums\\ProjectTaskPriority.cs",
@@ -601,7 +679,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 27,
               "Title": "ProjectTaskStatus.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Enums\\ProjectTaskStatus.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Enums\\ProjectTaskStatus.cs",
@@ -614,7 +692,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 30,
               "Title": "ProjectStatus.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Enums\\ProjectStatus.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Enums\\ProjectStatus.cs",
@@ -627,20 +705,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "CommentsController.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\CommentsController.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\CommentsController.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\CommentsController.cs",
-              "RelativeToolTip": "CentralSync.API\\Controllers\\CommentsController.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAYwCwAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T10:31:29.475Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 34,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Program.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Program.cs",
@@ -653,7 +718,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 33,
               "Title": "ProjectsController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\ProjectsController.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\ProjectsController.cs",
@@ -666,7 +731,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 31,
               "Title": "ProjectDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\ProjectDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\ProjectDto.cs",
@@ -679,7 +744,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 32,
               "Title": "CreateProjectRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateProjectRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\CreateProjectRequestDto.cs",
@@ -692,7 +757,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 35,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\AuthController.cs",
@@ -705,7 +770,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 36,
               "Title": "ExceptionHandlingMiddleware.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Middlewares\\ExceptionHandlingMiddleware.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Middlewares\\ExceptionHandlingMiddleware.cs",
@@ -718,7 +783,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 37,
               "Title": "TaskTimeLogsController.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Controllers\\TaskTimeLogsController.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Controllers\\TaskTimeLogsController.cs",
@@ -731,7 +796,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 40,
               "Title": "SQLUserRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLUserRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLUserRepository.cs",
@@ -744,20 +809,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "SQLCommentRepository.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
-              "RelativeToolTip": "CentralSync.API\\Repositories\\Concrete\\SQLCommentRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAIBJwA0AAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T09:05:09.016Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 38,
               "Title": "UserService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\UserService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\UserService.cs",
@@ -770,7 +822,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 41,
               "Title": "IUserRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Abstract\\IUserRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Abstract\\IUserRepository.cs",
@@ -783,7 +835,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 42,
               "Title": "ITaskRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Abstract\\ITaskRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Abstract\\ITaskRepository.cs",
@@ -796,7 +848,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 39,
               "Title": "IUserService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\IUserService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\IUserService.cs",
@@ -809,7 +861,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 43,
               "Title": "ITaskTimeLogRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Abstract\\ITaskTimeLogRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Abstract\\ITaskTimeLogRepository.cs",
@@ -822,7 +874,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 44,
               "Title": "TaskTimeLogService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\TaskTimeLogService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\TaskTimeLogService.cs",
@@ -835,7 +887,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 45,
               "Title": "SQLTaskTimeLogRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLTaskTimeLogRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLTaskTimeLogRepository.cs",
@@ -848,7 +900,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 46,
               "Title": "SQLTaskHistoryRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLTaskHistoryRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLTaskHistoryRepository.cs",
@@ -861,7 +913,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 47,
               "Title": "ITaskService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\ITaskService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\ITaskService.cs",
@@ -874,7 +926,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 48,
               "Title": "IProjectService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\IProjectService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\IProjectService.cs",
@@ -887,20 +939,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
-              "Title": "SQLTaskRepository.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
-              "RelativeToolTip": "CentralSync.API\\Repositories\\Concrete\\SQLTaskRepository.cs",
-              "ViewState": "AgIAADIAAAAAAAAAAAAgwDQAAABNAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T00:06:52.646Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 49,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\User.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\User.cs",
@@ -913,7 +952,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 50,
               "Title": "DatabaseSeeder.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Data\\DatabaseSeeder.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Data\\DatabaseSeeder.cs",
@@ -926,7 +965,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 51,
               "Title": "TaskTimeLog.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\TaskTimeLog.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\TaskTimeLog.cs",
@@ -939,7 +978,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 52,
               "Title": "CentralSyncDbContext.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Data\\CentralSyncDbContext.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Data\\CentralSyncDbContext.cs",
@@ -952,20 +991,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
-              "Title": "ProjectTask.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\ProjectTask.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\ProjectTask.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\ProjectTask.cs",
-              "RelativeToolTip": "CentralSync.API\\Models\\Domain\\ProjectTask.cs",
-              "ViewState": "AgIAABoAAAAAAAAAAAAswC4AAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T23:21:01.965Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 53,
               "Title": "TaskHistory.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\TaskHistory.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\TaskHistory.cs",
@@ -978,7 +1004,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 54,
               "Title": "CreateTaskTimeLogRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\CreateTaskTimeLogRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\CreateTaskTimeLogRequestDto.cs",
@@ -991,7 +1017,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 55,
               "Title": "ITaskHistoryRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Abstract\\ITaskHistoryRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Abstract\\ITaskHistoryRepository.cs",
@@ -1004,7 +1030,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 56,
               "Title": "ITaskTimeLogService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\ITaskTimeLogService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\ITaskTimeLogService.cs",
@@ -1017,7 +1043,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 57,
               "Title": "ICommentService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\ICommentService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\ICommentService.cs",
@@ -1030,7 +1056,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 58,
               "Title": "TaskTimeLogDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\TaskTimeLogDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\TaskTimeLogDto.cs",
@@ -1043,7 +1069,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 60,
               "Title": "ICurrentUserService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\ICurrentUserService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\ICurrentUserService.cs",
@@ -1056,7 +1082,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 59,
               "Title": "CurrentUserService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\CurrentUserService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\CurrentUserService.cs",
@@ -1069,7 +1095,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 61,
               "Title": "IProjectRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Abstract\\IProjectRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Abstract\\IProjectRepository.cs",
@@ -1082,7 +1108,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 62,
               "Title": "AuthService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\AuthService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\AuthService.cs",
@@ -1095,7 +1121,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 63,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Abstract\\IAuthService.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Services\\Abstract\\IAuthService.cs",
@@ -1108,7 +1134,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 64,
               "Title": "ICommentRepository.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Repositories\\Abstract\\ICommentRepository.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Repositories\\Abstract\\ICommentRepository.cs",
@@ -1121,7 +1147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 66,
               "Title": "LoginRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\LoginRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\LoginRequestDto.cs",
@@ -1134,7 +1160,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 65,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\appsettings.json",
               "RelativeDocumentMoniker": "CentralSync.API\\appsettings.json",
@@ -1147,7 +1173,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 67,
               "Title": "RegisterRequestDto.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\RegisterRequestDto.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\RegisterRequestDto.cs",
@@ -1160,20 +1186,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
-              "Title": "CommentService.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\CommentService.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Services\\Concrete\\CommentService.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Services\\Concrete\\CommentService.cs",
-              "RelativeToolTip": "CentralSync.API\\Services\\Concrete\\CommentService.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAwBcAAABjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T09:27:27.962Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 68,
               "Title": "Comment.cs",
               "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\Domain\\Comment.cs",
               "RelativeDocumentMoniker": "CentralSync.API\\Models\\Domain\\Comment.cs",
@@ -1182,19 +1195,6 @@
               "ViewState": "AgIAAAEAAAAAAAAAAABZwBAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-03T23:28:36.824Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 68,
-              "Title": "UpdateCommentRequestDto.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
-              "RelativeDocumentMoniker": "CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
-              "ToolTip": "C:\\Users\\PC\\Desktop\\CENTRALSync\\CentralSync\\CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
-              "RelativeToolTip": "CentralSync.API\\Models\\DTO\\UpdateCommentRequestDto.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAxwAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-11T09:01:57.056Z",
               "EditorCaption": ""
             },
             {

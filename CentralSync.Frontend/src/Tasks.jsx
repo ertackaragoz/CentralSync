@@ -19,6 +19,10 @@ export default function Tasks() {
     const [draggedTaskId, setDraggedTaskId] = useState(null);
     const [dragOverColumn, setDragOverColumn] = useState(null);
 
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
 
     useEffect(() => {
@@ -154,6 +158,47 @@ export default function Tasks() {
         setDragOverColumn(null);
     };
 
+    const openTaskModal = async (task) => {
+        setSelectedTask(task);
+        try {
+            const res = await api.get(`/tasks/${task.id}/comments`);
+            setComments(res.data);
+        } catch (err) {
+            setComments([]);
+        }
+    };
+
+    const closeTaskModal = () => {
+        setSelectedTask(null);
+        setComments([]);
+        setNewComment('');
+    };
+
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        if (!newComment.trim()) return;
+
+        try {
+            await api.post(`/tasks/${selectedTask.id}/comments`, { content: newComment });
+            setNewComment('');
+            const res = await api.get(`/tasks/${selectedTask.id}/comments`);
+            setComments(res.data);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to add comment!');
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm('Delete this comment?')) return;
+        try {
+            await api.delete(`/comments/${commentId}`);
+            const res = await api.get(`/tasks/${selectedTask.id}/comments`);
+            setComments(res.data);
+        } catch (err) {
+            alert(err.response?.data?.message || 'You can only delete your own comments!');
+        }
+    };
+
     if (loading) return <div style={{ padding: '50px' }}>Loading...</div>;
 
     return (
@@ -247,12 +292,13 @@ export default function Tasks() {
                                     draggable
                                     onDragStart={(e) => onDragStart(e, task.id)}
                                     onDragEnd={onDragEnd}
+                                    onClick={() => openTaskModal(task)}
                                     style={{
                                         background: 'white',
                                         padding: '15px',
                                         borderRadius: '6px',
                                         boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                                        cursor: 'grab',
+                                        cursor: 'pointer',
                                         opacity: draggedTaskId === task.id ? 0.4 : 1,
                                         transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)',
                                         transition: 'all 0.15s ease'
@@ -264,10 +310,17 @@ export default function Tasks() {
 
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
-                                        <button onClick={() => handleDeleteTask(task.id)} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
+                                            style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
+                                        >
+                                            ×
+                                        </button>
                                     </div>
 
-                                    <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>{task.description || 'No details.'}</p>
+                                    <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>
+                                        {task.description ? (task.description.length > 50 ? task.description.substring(0, 50) + '...' : task.description) : 'No details.'}
+                                    </p>
 
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
                                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -285,7 +338,9 @@ export default function Tasks() {
                                             borderRadius: '12px',
                                             fontWeight: 'bold'
                                         }}>
-                                            {task.assignedToUserId ? '👤 Assigned' : 'Unassigned'}
+                                            {task.assignedToUserId
+                                                ? `👤 ${task.assignedToUserFirstName || ''} ${task.assignedToUserLastName || ''}`.trim()
+                                                : 'Unassigned'}
                                         </div>
                                     </div>
                                 </div>
@@ -294,6 +349,71 @@ export default function Tasks() {
                     </div>
                 ))}
             </div>
+
+            {selectedTask && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
+                    display: 'flex', justifyContent: 'center', alignItems: 'center'
+                }}>
+                    <div style={{
+                        background: 'white', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '600px',
+                        maxHeight: '90vh', overflowY: 'auto', position: 'relative'
+                    }}>
+                        <button
+                            onClick={closeTaskModal}
+                            style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}
+                        >
+                            ✖
+                        </button>
+                        <h2 style={{ margin: '0 0 10px 0' }}>{selectedTask.title}</h2>
+                        <p style={{ color: '#555', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
+
+                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px' }}>
+                            <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
+                            <span style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority}</b></span>
+                        </div>
+
+                        <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
+
+                        <h3>Comments</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
+                            {comments.length === 0 ? (
+                                <p style={{ fontSize: '13px', color: '#888' }}>No comments yet.</p>
+                            ) : (
+                                comments.map(c => (
+                                    <div key={c.id} style={{ background: '#f9f9f9', padding: '15px', borderRadius: '6px', position: 'relative' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                                            <strong style={{ fontSize: '13px' }}>{c.userName}</strong>
+                                            <span style={{ fontSize: '11px', color: '#888' }}>{new Date(c.createdAt).toLocaleString()}</span>
+                                        </div>
+                                        <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
+                                        <button
+                                            onClick={() => handleDeleteComment(c.id)}
+                                            style={{ background: 'transparent', border: 'none', color: '#bf2600', fontSize: '12px', cursor: 'pointer', padding: 0 }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            <textarea
+                                placeholder="Write a comment..."
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                required
+                                style={{ padding: '10px', minHeight: '80px', borderRadius: '4px', border: '1px solid #ccc' }}
+                            />
+                            <button type="submit" style={{ padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                                Post Comment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
