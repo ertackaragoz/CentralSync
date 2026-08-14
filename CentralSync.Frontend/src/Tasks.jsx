@@ -34,6 +34,9 @@ export default function Tasks() {
     const [logDescription, setLogDescription] = useState('');
     const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
 
+    // History States
+    const [histories, setHistories] = useState([]);
+
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
 
     useEffect(() => {
@@ -129,6 +132,13 @@ export default function Tasks() {
                 headers: { 'Content-Type': 'application/json' }
             });
             fetchInitialData();
+
+            // If modal is open for this task, refresh its history and status visually
+            if (selectedTask && selectedTask.id === taskId) {
+                setSelectedTask(prev => ({ ...prev, status: newStatus }));
+                const historyRes = await api.get(`/tasks/${taskId}/histories`);
+                setHistories(historyRes.data);
+            }
         } catch (err) {
             alert('Task status could not be updated!');
         }
@@ -174,15 +184,18 @@ export default function Tasks() {
     const openTaskModal = async (task) => {
         setSelectedTask(task);
         try {
-            const [commentsRes, logsRes] = await Promise.all([
+            const [commentsRes, logsRes, historiesRes] = await Promise.all([
                 api.get(`/tasks/${task.id}/comments`),
-                api.get(`/tasks/${task.id}/time-logs`)
+                api.get(`/tasks/${task.id}/time-logs`),
+                api.get(`/tasks/${task.id}/histories`)
             ]);
             setComments(commentsRes.data);
             setTimeLogs(logsRes.data);
+            setHistories(historiesRes.data);
         } catch (err) {
             setComments([]);
             setTimeLogs([]);
+            setHistories([]);
         }
     };
 
@@ -190,6 +203,7 @@ export default function Tasks() {
         setSelectedTask(null);
         setComments([]);
         setTimeLogs([]);
+        setHistories([]);
         setNewComment('');
         setLogHours('');
         setLogDescription('');
@@ -239,10 +253,9 @@ export default function Tasks() {
             setLogHours('');
             setLogDescription('');
 
-            // Refresh Data
             const res = await api.get(`/tasks/${selectedTask.id}/time-logs`);
             setTimeLogs(res.data);
-            fetchInitialData(); // Board'daki task verisini (ActualHours için) güncelle
+            fetchInitialData();
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to add time log!');
         }
@@ -272,6 +285,7 @@ export default function Tasks() {
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
+            {/* CREATE TASK FORM */}
             <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
                 <h3>Create New Task</h3>
                 <form onSubmit={handleCreateTask} style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(4, 1fr)' }}>
@@ -317,6 +331,7 @@ export default function Tasks() {
                 </form>
             </div>
 
+            {/* KANBAN BOARD */}
             <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'start' }}>
                 {columns.map(column => (
                     <div
@@ -399,6 +414,7 @@ export default function Tasks() {
                 ))}
             </div>
 
+            {/* TASK DETAILS MODAL */}
             {selectedTask && (
                 <div style={{
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
@@ -430,10 +446,10 @@ export default function Tasks() {
                         <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                            {/* Sol Taraf: Zaman Kayıtları (Time Logs) */}
+                            {/* Left Panel: Time Logs */}
                             <div>
                                 <h3>Time Logs</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', maxHeight: '300px', overflowY: 'auto' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', maxHeight: '250px', overflowY: 'auto' }}>
                                     {timeLogs.length === 0 ? (
                                         <p style={{ fontSize: '13px', color: '#888' }}>No time logged yet.</p>
                                     ) : (
@@ -474,10 +490,10 @@ export default function Tasks() {
                                 </form>
                             </div>
 
-                            {/* Sağ Taraf: Yorumlar (Comments) */}
+                            {/* Right Panel: Comments */}
                             <div>
                                 <h3>Comments</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px', maxHeight: '300px', overflowY: 'auto' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px', maxHeight: '250px', overflowY: 'auto' }}>
                                     {comments.length === 0 ? (
                                         <p style={{ fontSize: '13px', color: '#888' }}>No comments yet.</p>
                                     ) : (
@@ -511,6 +527,24 @@ export default function Tasks() {
                                         Post Comment
                                     </button>
                                 </form>
+                            </div>
+                        </div>
+
+                        {/* Bottom Panel: Activity History */}
+                        <div style={{ marginTop: '30px' }}>
+                            <h3 style={{ margin: '0 0 15px 0' }}>Activity History</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto', background: '#fafafa', border: '1px solid #eee', padding: '15px', borderRadius: '6px' }}>
+                                {histories.length === 0 ? (
+                                    <p style={{ fontSize: '13px', color: '#888', margin: 0 }}>No activity recorded yet.</p>
+                                ) : (
+                                    histories.map(h => (
+                                        <div key={h.id} style={{ fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'flex-start', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
+                                            <span style={{ color: '#888', minWidth: '130px', flexShrink: 0 }}>{new Date(h.createdAt).toLocaleString()}</span>
+                                            <span style={{ color: '#007bff', flexShrink: 0 }}>•</span>
+                                            <span style={{ color: '#333' }}>{h.description}</span>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
