@@ -16,6 +16,9 @@ export default function Tasks() {
     const [dueDate, setDueDate] = useState('');
     const [estimatedHours, setEstimatedHours] = useState('');
 
+    const [draggedTaskId, setDraggedTaskId] = useState(null);
+    const [dragOverColumn, setDragOverColumn] = useState(null);
+
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
 
     useEffect(() => {
@@ -56,6 +59,11 @@ export default function Tasks() {
         }
     };
 
+    const getProjectName = (id) => {
+        const project = projects.find(p => p.id === id);
+        return project ? project.name : 'Unknown Project';
+    };
+
     const handleCreateTask = async (e) => {
         e.preventDefault();
         if (!projectId) {
@@ -89,6 +97,17 @@ export default function Tasks() {
         }
     };
 
+    const handleDeleteTask = async (taskId) => {
+        if (!window.confirm('Are you sure you want to delete this task?')) return;
+
+        try {
+            await api.delete(`/tasks/${taskId}`);
+            fetchInitialData();
+        } catch (err) {
+            alert('Task could not be deleted!');
+        }
+    };
+
     const handleStatusChange = async (taskId, newStatus) => {
         try {
             await api.patch(`/tasks/${taskId}/status`, JSON.stringify(newStatus), {
@@ -100,15 +119,39 @@ export default function Tasks() {
         }
     };
 
-    const handleDeleteTask = async (taskId) => {
-        if (!window.confirm('Are you sure you want to delete this task?')) return;
+    const onDragStart = (e, taskId) => {
+        setDraggedTaskId(taskId);
+        e.dataTransfer.effectAllowed = 'move';
+    };
 
-        try {
-            await api.delete(`/tasks/${taskId}`);
-            fetchInitialData();
-        } catch (err) {
-            alert('Task could not be deleted!');
+    const onDragOver = (e, column) => {
+        e.preventDefault();
+        setDragOverColumn(column);
+    };
+
+    const onDragLeave = () => {
+        setDragOverColumn(null);
+    };
+
+    const onDrop = (e, column) => {
+        e.preventDefault();
+        setDragOverColumn(null);
+        const currentTaskId = draggedTaskId;
+        setDraggedTaskId(null);
+
+        if (currentTaskId) {
+            const task = tasks.find(t => t.id === currentTaskId);
+            if (task && task.status !== column) {
+                setTimeout(() => {
+                    handleStatusChange(currentTaskId, column);
+                }, 0);
+            }
         }
+    };
+
+    const onDragEnd = () => {
+        setDraggedTaskId(null);
+        setDragOverColumn(null);
     };
 
     if (loading) return <div style={{ padding: '50px' }}>Loading...</div>;
@@ -152,16 +195,14 @@ export default function Tasks() {
                         placeholder="Task Description" value={description} onChange={(e) => setDescription(e.target.value)}
                         style={{ padding: '10px', gridColumn: 'span 4' }}
                     />
-
                     <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1' }}>
                         <option value="">-- Unassigned --</option>
                         {projectMembers.map(m => (
                             <option key={m.id || m.userId} value={m.userId || m.id}>
-                                {m.user?.firstName ? `${m.user.firstName} ${m.user.lastName}` : (m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id))}
+                                {m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id)}
                             </option>
                         ))}
                     </select>
-
                     <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1' }}>
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
@@ -184,36 +225,69 @@ export default function Tasks() {
 
             <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'start' }}>
                 {columns.map(column => (
-                    <div key={column} style={{ background: '#ebecf0', padding: '15px', borderRadius: '8px', minHeight: '400px' }}>
+                    <div
+                        key={column}
+                        onDragOver={(e) => onDragOver(e, column)}
+                        onDragLeave={onDragLeave}
+                        onDrop={(e) => onDrop(e, column)}
+                        style={{
+                            background: dragOverColumn === column ? '#d3d5db' : '#ebecf0',
+                            padding: '15px',
+                            borderRadius: '8px',
+                            minHeight: '400px',
+                            transition: 'background 0.2s ease'
+                        }}
+                    >
                         <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#172b4d', textTransform: 'uppercase' }}>{column}</h3>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {tasks.filter(t => t.status === column).map(task => (
-                                <div key={task.id} style={{ background: 'white', padding: '15px', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
+                                <div
+                                    key={task.id}
+                                    draggable
+                                    onDragStart={(e) => onDragStart(e, task.id)}
+                                    onDragEnd={onDragEnd}
+                                    style={{
+                                        background: 'white',
+                                        padding: '15px',
+                                        borderRadius: '6px',
+                                        boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+                                        cursor: 'grab',
+                                        opacity: draggedTaskId === task.id ? 0.4 : 1,
+                                        transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)',
+                                        transition: 'all 0.15s ease'
+                                    }}
+                                >
+                                    <div style={{ fontSize: '10px', color: '#888', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                                        {getProjectName(task.projectId)}
+                                    </div>
+
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
-                                        <button onClick={() => handleDeleteTask(task.id)} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold' }}>X</button>
+                                        <button onClick={() => handleDeleteTask(task.id)} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
                                     </div>
 
                                     <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>{task.description || 'No details.'}</p>
 
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? 'red' : task.priority === 'High' ? 'orange' : 'gray' }}>
-                                            {task.priority}
-                                        </span>
-                                        {task.estimatedHours && <span style={{ fontSize: '11px', color: '#666' }}>⏱ {task.estimatedHours}h</span>}
-                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
+                                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? 'red' : task.priority === 'High' ? 'orange' : 'gray' }}>
+                                                {task.priority}
+                                            </span>
+                                            {task.estimatedHours && <span style={{ fontSize: '11px', color: '#666' }}>⏱ {task.estimatedHours}h</span>}
+                                        </div>
 
-                                    <select
-                                        value={task.status}
-                                        onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                                        style={{ width: '100%', padding: '5px', fontSize: '12px', border: '1px solid #ccc', borderRadius: '4px' }}
-                                    >
-                                        <option value="Todo">Move to Todo</option>
-                                        <option value="InProgress">Move to InProgress</option>
-                                        <option value="InReview">Move to InReview</option>
-                                        <option value="Done">Move to Done</option>
-                                    </select>
+                                        <div style={{
+                                            fontSize: '10px',
+                                            background: task.assignedToUserId ? '#e3fcef' : '#ffebe6',
+                                            color: task.assignedToUserId ? '#006644' : '#bf2600',
+                                            padding: '3px 6px',
+                                            borderRadius: '12px',
+                                            fontWeight: 'bold'
+                                        }}>
+                                            {task.assignedToUserId ? '👤 Assigned' : 'Unassigned'}
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
