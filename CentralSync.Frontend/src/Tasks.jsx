@@ -23,18 +23,23 @@ export default function Tasks() {
 
     // Modal States
     const [selectedTask, setSelectedTask] = useState(null);
+    const [isEditingTask, setIsEditingTask] = useState(false);
 
-    // Comments States
+    // Edit Task States
+    const [editTitle, setEditTitle] = useState('');
+    const [editDescription, setEditDescription] = useState('');
+    const [editAssignedToUserId, setEditAssignedToUserId] = useState('');
+    const [editPriority, setEditPriority] = useState('');
+    const [editDueDate, setEditDueDate] = useState('');
+    const [editEstimatedHours, setEditEstimatedHours] = useState('');
+
+    // Comments & Time Logs & History States
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
-
-    // Time Logs States
     const [timeLogs, setTimeLogs] = useState([]);
     const [logHours, setLogHours] = useState('');
     const [logDescription, setLogDescription] = useState('');
     const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
-
-    // History States
     const [histories, setHistories] = useState([]);
 
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
@@ -133,7 +138,6 @@ export default function Tasks() {
             });
             fetchInitialData();
 
-            // If modal is open for this task, refresh its history and status visually
             if (selectedTask && selectedTask.id === taskId) {
                 setSelectedTask(prev => ({ ...prev, status: newStatus }));
                 const historyRes = await api.get(`/tasks/${taskId}/histories`);
@@ -144,7 +148,6 @@ export default function Tasks() {
         }
     };
 
-    // Drag & Drop Handlers
     const onDragStart = (e, taskId) => {
         setDraggedTaskId(taskId);
         e.dataTransfer.effectAllowed = 'move';
@@ -180,9 +183,13 @@ export default function Tasks() {
         setDragOverColumn(null);
     };
 
-    // Modal Handlers
     const openTaskModal = async (task) => {
         setSelectedTask(task);
+        setIsEditingTask(false);
+
+        // Yalnızca projeye ait üyeleri getir (Edit modunda atama yapmak için lazım)
+        fetchProjectMembers(task.projectId);
+
         try {
             const [commentsRes, logsRes, historiesRes] = await Promise.all([
                 api.get(`/tasks/${task.id}/comments`),
@@ -201,20 +208,54 @@ export default function Tasks() {
 
     const closeTaskModal = () => {
         setSelectedTask(null);
+        setIsEditingTask(false);
         setComments([]);
         setTimeLogs([]);
         setHistories([]);
         setNewComment('');
-        setLogHours('');
-        setLogDescription('');
-        setLogDate(new Date().toISOString().split('T')[0]);
     };
 
-    // Comment Handlers
+    const handleEditClick = () => {
+        setEditTitle(selectedTask.title);
+        setEditDescription(selectedTask.description || '');
+        setEditAssignedToUserId(selectedTask.assignedToUserId || '');
+        setEditPriority(selectedTask.priority);
+        setEditDueDate(selectedTask.dueDate ? selectedTask.dueDate.split('T')[0] : '');
+        setEditEstimatedHours(selectedTask.estimatedHours || '');
+        setIsEditingTask(true);
+    };
+
+    const handleUpdateTask = async (e) => {
+        e.preventDefault();
+        try {
+            const updatedData = {
+                title: editTitle,
+                description: editDescription,
+                assignedToUserId: editAssignedToUserId || null,
+                priority: editPriority,
+                dueDate: editDueDate ? new Date(editDueDate).toISOString() : null,
+                estimatedHours: editEstimatedHours ? parseFloat(editEstimatedHours) : null
+            };
+
+            await api.put(`/tasks/${selectedTask.id}`, updatedData);
+
+            // Update local state and UI
+            setIsEditingTask(false);
+            fetchInitialData();
+
+            // Refresh modal data
+            setSelectedTask(prev => ({ ...prev, ...updatedData }));
+            const historyRes = await api.get(`/tasks/${selectedTask.id}/histories`);
+            setHistories(historyRes.data);
+
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to update task!');
+        }
+    };
+
     const handleAddComment = async (e) => {
         e.preventDefault();
         if (!newComment.trim()) return;
-
         try {
             await api.post(`/tasks/${selectedTask.id}/comments`, { content: newComment });
             setNewComment('');
@@ -236,14 +277,12 @@ export default function Tasks() {
         }
     };
 
-    // Time Log Handlers
     const handleAddTimeLog = async (e) => {
         e.preventDefault();
         if (!logHours || parseFloat(logHours) <= 0) {
             alert('Hours must be greater than 0');
             return;
         }
-
         try {
             await api.post(`/tasks/${selectedTask.id}/time-logs`, {
                 hours: parseFloat(logHours),
@@ -252,7 +291,6 @@ export default function Tasks() {
             });
             setLogHours('');
             setLogDescription('');
-
             const res = await api.get(`/tasks/${selectedTask.id}/time-logs`);
             setTimeLogs(res.data);
             fetchInitialData();
@@ -339,72 +377,35 @@ export default function Tasks() {
                         onDragOver={(e) => onDragOver(e, column)}
                         onDragLeave={onDragLeave}
                         onDrop={(e) => onDrop(e, column)}
-                        style={{
-                            background: dragOverColumn === column ? '#d3d5db' : '#ebecf0',
-                            padding: '15px',
-                            borderRadius: '8px',
-                            minHeight: '400px',
-                            transition: 'background 0.2s ease'
-                        }}
+                        style={{ background: dragOverColumn === column ? '#d3d5db' : '#ebecf0', padding: '15px', borderRadius: '8px', minHeight: '400px', transition: 'background 0.2s ease' }}
                     >
                         <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#172b4d', textTransform: 'uppercase' }}>{column}</h3>
-
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {tasks.filter(t => t.status === column).map(task => (
                                 <div
-                                    key={task.id}
-                                    draggable
-                                    onDragStart={(e) => onDragStart(e, task.id)}
-                                    onDragEnd={onDragEnd}
-                                    onClick={() => openTaskModal(task)}
+                                    key={task.id} draggable onDragStart={(e) => onDragStart(e, task.id)} onDragEnd={onDragEnd} onClick={() => openTaskModal(task)}
                                     style={{
-                                        background: 'white',
-                                        padding: '15px',
-                                        borderRadius: '6px',
-                                        boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-                                        cursor: 'pointer',
-                                        opacity: draggedTaskId === task.id ? 0.4 : 1,
-                                        transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)',
-                                        transition: 'all 0.15s ease'
+                                        background: 'white', padding: '15px', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', cursor: 'pointer',
+                                        opacity: draggedTaskId === task.id ? 0.4 : 1, transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.15s ease'
                                     }}
                                 >
                                     <div style={{ fontSize: '10px', color: '#888', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 'bold' }}>
                                         {getProjectName(task.projectId)}
                                     </div>
-
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
-                                            style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
-                                        >
-                                            ×
-                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
                                     </div>
-
                                     <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>
                                         {task.description ? (task.description.length > 50 ? task.description.substring(0, 50) + '...' : task.description) : 'No details.'}
                                     </p>
-
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
                                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? 'red' : task.priority === 'High' ? 'orange' : 'gray' }}>
-                                                {task.priority}
-                                            </span>
+                                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? 'red' : task.priority === 'High' ? 'orange' : 'gray' }}>{task.priority}</span>
                                             {task.estimatedHours && <span style={{ fontSize: '11px', color: '#666' }}>Est: {task.estimatedHours}h</span>}
                                         </div>
-
-                                        <div style={{
-                                            fontSize: '10px',
-                                            background: task.assignedToUserId ? '#e3fcef' : '#ffebe6',
-                                            color: task.assignedToUserId ? '#006644' : '#bf2600',
-                                            padding: '3px 6px',
-                                            borderRadius: '12px',
-                                            fontWeight: 'bold'
-                                        }}>
-                                            {task.assignedToUserId
-                                                ? `👤 ${task.assignedToUserFirstName || ''} ${task.assignedToUserLastName || ''}`.trim()
-                                                : 'Unassigned'}
+                                        <div style={{ fontSize: '10px', background: task.assignedToUserId ? '#e3fcef' : '#ffebe6', color: task.assignedToUserId ? '#006644' : '#bf2600', padding: '3px 6px', borderRadius: '12px', fontWeight: 'bold' }}>
+                                            {task.assignedToUserId ? `👤 ${task.assignedToUserFirstName || ''} ${task.assignedToUserLastName || ''}`.trim() : 'Unassigned'}
                                         </div>
                                     </div>
                                 </div>
@@ -416,32 +417,79 @@ export default function Tasks() {
 
             {/* TASK DETAILS MODAL */}
             {selectedTask && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
-                    display: 'flex', justifyContent: 'center', alignItems: 'center'
-                }}>
-                    <div style={{
-                        background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px',
-                        maxHeight: '90vh', overflowY: 'auto', position: 'relative'
-                    }}>
-                        <button
-                            onClick={closeTaskModal}
-                            style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}
-                        >
-                            ✖
-                        </button>
-                        <h2 style={{ margin: '0 0 10px 0' }}>{selectedTask.title}</h2>
-                        <p style={{ color: '#555', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
 
-                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
-                            <span style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority}</b></span>
-                            {selectedTask.estimatedHours && <span style={{ padding: '5px 10px', background: '#e6f7ff', borderRadius: '4px', color: '#0050b3' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
-                            <span style={{ padding: '5px 10px', background: '#f6ffed', borderRadius: '4px', color: '#389e0d', border: '1px solid #b7eb8f' }}>
-                                Total Logged: <b>{timeLogs.reduce((acc, log) => acc + log.hours, 0)}h</b>
-                            </span>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
+                            {!isEditingTask && (
+                                <button onClick={handleEditClick} style={{ padding: '6px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+                                    Edit Task
+                                </button>
+                            )}
+                            <button onClick={closeTaskModal} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}>✖</button>
                         </div>
+
+                        {isEditingTask ? (
+                            <form onSubmit={handleUpdateTask} style={{ background: '#fffbcc', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+                                <h3 style={{ margin: '0 0 15px 0' }}>Edit Task Details</h3>
+                                <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr 1fr' }}>
+                                    <div style={{ gridColumn: 'span 2' }}>
+                                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Title</label>
+                                        <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} required style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} />
+                                    </div>
+                                    <div style={{ gridColumn: 'span 2' }}>
+                                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Description</label>
+                                        <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box', minHeight: '80px' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Assign To</label>
+                                        <select value={editAssignedToUserId} onChange={(e) => setEditAssignedToUserId(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}>
+                                            <option value="">-- Unassigned --</option>
+                                            {projectMembers.map(m => (
+                                                <option key={m.id || m.userId} value={m.userId || m.id}>
+                                                    {m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Priority</label>
+                                        <select value={editPriority} onChange={(e) => setEditPriority(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}>
+                                            <option value="Low">Low</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="High">High</option>
+                                            <option value="Critical">Critical</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Due Date</label>
+                                        <input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Estimated Hours</label>
+                                        <input type="number" step="0.5" min="0" value={editEstimatedHours} onChange={(e) => setEditEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} />
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                                    <button type="submit" style={{ padding: '10px 20px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Save Changes</button>
+                                    <button type="button" onClick={() => setIsEditingTask(false)} style={{ padding: '10px 20px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
+                                </div>
+                            </form>
+                        ) : (
+                            <>
+                                <h2 style={{ margin: '0 0 10px 0' }}>{selectedTask.title}</h2>
+                                <p style={{ color: '#555', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
+
+                                <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
+                                    <span style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority}</b></span>
+                                    {selectedTask.estimatedHours && <span style={{ padding: '5px 10px', background: '#e6f7ff', borderRadius: '4px', color: '#0050b3' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
+                                    <span style={{ padding: '5px 10px', background: '#f6ffed', borderRadius: '4px', color: '#389e0d', border: '1px solid #b7eb8f' }}>
+                                        Total Logged: <b>{timeLogs.reduce((acc, log) => acc + log.hours, 0)}h</b>
+                                    </span>
+                                </div>
+                            </>
+                        )}
 
                         <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
 
