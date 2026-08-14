@@ -8,6 +8,7 @@ export default function Tasks() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    // New Task States
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [projectId, setProjectId] = useState('');
@@ -16,12 +17,22 @@ export default function Tasks() {
     const [dueDate, setDueDate] = useState('');
     const [estimatedHours, setEstimatedHours] = useState('');
 
+    // Drag & Drop States
     const [draggedTaskId, setDraggedTaskId] = useState(null);
     const [dragOverColumn, setDragOverColumn] = useState(null);
 
+    // Modal States
     const [selectedTask, setSelectedTask] = useState(null);
+
+    // Comments States
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+
+    // Time Logs States
+    const [timeLogs, setTimeLogs] = useState([]);
+    const [logHours, setLogHours] = useState('');
+    const [logDescription, setLogDescription] = useState('');
+    const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
 
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
 
@@ -123,6 +134,7 @@ export default function Tasks() {
         }
     };
 
+    // Drag & Drop Handlers
     const onDragStart = (e, taskId) => {
         setDraggedTaskId(taskId);
         e.dataTransfer.effectAllowed = 'move';
@@ -158,22 +170,33 @@ export default function Tasks() {
         setDragOverColumn(null);
     };
 
+    // Modal Handlers
     const openTaskModal = async (task) => {
         setSelectedTask(task);
         try {
-            const res = await api.get(`/tasks/${task.id}/comments`);
-            setComments(res.data);
+            const [commentsRes, logsRes] = await Promise.all([
+                api.get(`/tasks/${task.id}/comments`),
+                api.get(`/tasks/${task.id}/time-logs`)
+            ]);
+            setComments(commentsRes.data);
+            setTimeLogs(logsRes.data);
         } catch (err) {
             setComments([]);
+            setTimeLogs([]);
         }
     };
 
     const closeTaskModal = () => {
         setSelectedTask(null);
         setComments([]);
+        setTimeLogs([]);
         setNewComment('');
+        setLogHours('');
+        setLogDescription('');
+        setLogDate(new Date().toISOString().split('T')[0]);
     };
 
+    // Comment Handlers
     const handleAddComment = async (e) => {
         e.preventDefault();
         if (!newComment.trim()) return;
@@ -196,6 +219,32 @@ export default function Tasks() {
             setComments(res.data);
         } catch (err) {
             alert(err.response?.data?.message || 'You can only delete your own comments!');
+        }
+    };
+
+    // Time Log Handlers
+    const handleAddTimeLog = async (e) => {
+        e.preventDefault();
+        if (!logHours || parseFloat(logHours) <= 0) {
+            alert('Hours must be greater than 0');
+            return;
+        }
+
+        try {
+            await api.post(`/tasks/${selectedTask.id}/time-logs`, {
+                hours: parseFloat(logHours),
+                description: logDescription,
+                workDate: logDate
+            });
+            setLogHours('');
+            setLogDescription('');
+
+            // Refresh Data
+            const res = await api.get(`/tasks/${selectedTask.id}/time-logs`);
+            setTimeLogs(res.data);
+            fetchInitialData(); // Board'daki task verisini (ActualHours için) güncelle
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to add time log!');
         }
     };
 
@@ -327,7 +376,7 @@ export default function Tasks() {
                                             <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? 'red' : task.priority === 'High' ? 'orange' : 'gray' }}>
                                                 {task.priority}
                                             </span>
-                                            {task.estimatedHours && <span style={{ fontSize: '11px', color: '#666' }}>⏱ {task.estimatedHours}h</span>}
+                                            {task.estimatedHours && <span style={{ fontSize: '11px', color: '#666' }}>Est: {task.estimatedHours}h</span>}
                                         </div>
 
                                         <div style={{
@@ -357,7 +406,7 @@ export default function Tasks() {
                     display: 'flex', justifyContent: 'center', alignItems: 'center'
                 }}>
                     <div style={{
-                        background: 'white', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '600px',
+                        background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px',
                         maxHeight: '90vh', overflowY: 'auto', position: 'relative'
                     }}>
                         <button
@@ -369,48 +418,101 @@ export default function Tasks() {
                         <h2 style={{ margin: '0 0 10px 0' }}>{selectedTask.title}</h2>
                         <p style={{ color: '#555', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
 
-                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px' }}>
+                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
                             <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
                             <span style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority}</b></span>
+                            {selectedTask.estimatedHours && <span style={{ padding: '5px 10px', background: '#e6f7ff', borderRadius: '4px', color: '#0050b3' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
+                            <span style={{ padding: '5px 10px', background: '#f6ffed', borderRadius: '4px', color: '#389e0d', border: '1px solid #b7eb8f' }}>
+                                Total Logged: <b>{timeLogs.reduce((acc, log) => acc + log.hours, 0)}h</b>
+                            </span>
                         </div>
 
                         <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
 
-                        <h3>Comments</h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
-                            {comments.length === 0 ? (
-                                <p style={{ fontSize: '13px', color: '#888' }}>No comments yet.</p>
-                            ) : (
-                                comments.map(c => (
-                                    <div key={c.id} style={{ background: '#f9f9f9', padding: '15px', borderRadius: '6px', position: 'relative' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                                            <strong style={{ fontSize: '13px' }}>{c.userName}</strong>
-                                            <span style={{ fontSize: '11px', color: '#888' }}>{new Date(c.createdAt).toLocaleString()}</span>
-                                        </div>
-                                        <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
-                                        <button
-                                            onClick={() => handleDeleteComment(c.id)}
-                                            style={{ background: 'transparent', border: 'none', color: '#bf2600', fontSize: '12px', cursor: 'pointer', padding: 0 }}
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                ))
-                            )}
-                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                            {/* Sol Taraf: Zaman Kayıtları (Time Logs) */}
+                            <div>
+                                <h3>Time Logs</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', maxHeight: '300px', overflowY: 'auto' }}>
+                                    {timeLogs.length === 0 ? (
+                                        <p style={{ fontSize: '13px', color: '#888' }}>No time logged yet.</p>
+                                    ) : (
+                                        timeLogs.map(log => (
+                                            <div key={log.id} style={{ background: '#f0f7ff', padding: '12px', borderRadius: '6px', borderLeft: '4px solid #007bff' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                                                    <strong style={{ fontSize: '13px' }}>{log.userFullName}</strong>
+                                                    <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0056b3' }}>{log.hours}h</span>
+                                                </div>
+                                                <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#333' }}>{log.description || 'No description'}</p>
+                                                <span style={{ fontSize: '11px', color: '#888' }}>{new Date(log.workDate).toLocaleDateString()}</span>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
 
-                        <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <textarea
-                                placeholder="Write a comment..."
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                                required
-                                style={{ padding: '10px', minHeight: '80px', borderRadius: '4px', border: '1px solid #ccc' }}
-                            />
-                            <button type="submit" style={{ padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                                Post Comment
-                            </button>
-                        </form>
+                                <form onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
+                                    <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <input
+                                            type="number" step="0.5" min="0.5" placeholder="Hours (e.g. 2.5)"
+                                            value={logHours} onChange={(e) => setLogHours(e.target.value)} required
+                                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                                        />
+                                        <input
+                                            type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} required
+                                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                                        />
+                                    </div>
+                                    <input
+                                        type="text" placeholder="What did you work on? (optional)"
+                                        value={logDescription} onChange={(e) => setLogDescription(e.target.value)}
+                                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                    />
+                                    <button type="submit" style={{ padding: '8px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                                        Log Time
+                                    </button>
+                                </form>
+                            </div>
+
+                            {/* Sağ Taraf: Yorumlar (Comments) */}
+                            <div>
+                                <h3>Comments</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px', maxHeight: '300px', overflowY: 'auto' }}>
+                                    {comments.length === 0 ? (
+                                        <p style={{ fontSize: '13px', color: '#888' }}>No comments yet.</p>
+                                    ) : (
+                                        comments.map(c => (
+                                            <div key={c.id} style={{ background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                                                    <strong style={{ fontSize: '13px' }}>{c.userName}</strong>
+                                                    <span style={{ fontSize: '11px', color: '#888' }}>{new Date(c.createdAt).toLocaleString()}</span>
+                                                </div>
+                                                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
+                                                <button
+                                                    onClick={() => handleDeleteComment(c.id)}
+                                                    style={{ background: 'transparent', border: 'none', color: '#bf2600', fontSize: '12px', cursor: 'pointer', padding: 0 }}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <textarea
+                                        placeholder="Write a comment..."
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                        required
+                                        style={{ padding: '10px', minHeight: '80px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                    />
+                                    <button type="submit" style={{ padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                                        Post Comment
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
