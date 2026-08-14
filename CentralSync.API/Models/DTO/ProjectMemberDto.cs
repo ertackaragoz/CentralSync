@@ -10,6 +10,10 @@ namespace CentralSync.API.Models.DTO
 
         public Guid UserId { get; set; }
 
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
         public ProjectMemberRole Role { get; set; }
 
         public DateTime JoinedAt { get; set; }

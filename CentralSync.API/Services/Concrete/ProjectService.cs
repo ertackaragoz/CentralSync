@@ -194,6 +194,8 @@ namespace CentralSync.API.Services.Concrete
                 Id = pm.Id,
                 ProjectId = pm.ProjectId,
                 UserId = pm.UserId,
+                FirstName = pm.User.FirstName,
+                LastName = pm.User.LastName,
                 Role = pm.Role,
                 JoinedAt = pm.JoinedAt,
                 IsActive = pm.IsActive,
