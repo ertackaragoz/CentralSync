@@ -50,12 +50,13 @@ namespace CentralSync.API.Repositories.Concrete
             }
 
             var skipAmount = (page - 1) * pageSize;
-            return await query.Skip(skipAmount).Take(pageSize).ToListAsync();
+
+            return await query.Include(t => t.AssignedToUser).Skip(skipAmount).Take(pageSize).ToListAsync();
         }
 
         public async Task<ProjectTask?> GetByIdAsync(Guid taskId)
         {
-            return await _dbcontext.Tasks.FindAsync(taskId);
+            return await _dbcontext.Tasks.Include(t => t.AssignedToUser).FirstOrDefaultAsync(t => t.Id == taskId);
         }
 
         public async Task<ProjectTask> UpdateAsync(ProjectTask task)

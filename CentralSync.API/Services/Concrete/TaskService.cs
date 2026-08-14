@@ -95,10 +95,12 @@ namespace CentralSync.API.Services.Concrete
             return tasks.Select(t => new TaskDto
             {
                 Id = t.Id,
-                Title = t.Title,    
+                Title = t.Title,
                 Description = t.Description,
                 ProjectId = t.ProjectId,
                 AssignedToUserId = t.AssignedToUserId,
+                AssignedToUserFirstName = t.AssignedToUser?.FirstName,
+                AssignedToUserLastName = t.AssignedToUser?.LastName,
                 CreatedByUserId = t.CreatedByUserId,
                 Status = t.Status,
                 Priority = t.Priority,
@@ -126,6 +128,8 @@ namespace CentralSync.API.Services.Concrete
                 Description = task.Description,
                 ProjectId = task.ProjectId,
                 AssignedToUserId = task.AssignedToUserId,
+                AssignedToUserFirstName = task.AssignedToUser?.FirstName,
+                AssignedToUserLastName = task.AssignedToUser?.LastName,
                 CreatedByUserId = task.CreatedByUserId,
                 Status = task.Status,
                 Priority = task.Priority,
