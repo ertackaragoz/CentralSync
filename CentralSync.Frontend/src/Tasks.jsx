@@ -87,6 +87,17 @@ export default function Tasks() {
         return project ? project.name : 'Unknown Project';
     };
 
+    const getSelectedProjectStartDate = (pId) => {
+        const project = projects.find(p => p.id === pId);
+        return project && project.startDate ? project.startDate.split('T')[0] : '';
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('tr-TR'); // d/m/year formatı
+    };
+
     const handleCreateTask = async (e) => {
         e.preventDefault();
         if (!projectId) {
@@ -122,7 +133,6 @@ export default function Tasks() {
 
     const handleDeleteTask = async (taskId) => {
         if (!window.confirm('Are you sure you want to delete this task?')) return;
-
         try {
             await api.delete(`/tasks/${taskId}`);
             fetchInitialData();
@@ -186,8 +196,6 @@ export default function Tasks() {
     const openTaskModal = async (task) => {
         setSelectedTask(task);
         setIsEditingTask(false);
-
-        // Yalnızca projeye ait üyeleri getir (Edit modunda atama yapmak için lazım)
         fetchProjectMembers(task.projectId);
 
         try {
@@ -239,15 +247,12 @@ export default function Tasks() {
 
             await api.put(`/tasks/${selectedTask.id}`, updatedData);
 
-            // Update local state and UI
             setIsEditingTask(false);
             fetchInitialData();
 
-            // Refresh modal data
             setSelectedTask(prev => ({ ...prev, ...updatedData }));
             const historyRes = await api.get(`/tasks/${selectedTask.id}/histories`);
             setHistories(historyRes.data);
-
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to update task!');
         }
@@ -308,13 +313,13 @@ export default function Tasks() {
                 <div>
                     <button
                         onClick={() => { window.location.href = '/projects'; }}
-                        style={{ padding: '8px 15px', background: '#007bff', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px' }}
+                        style={{ padding: '8px 15px', background: '#007bff', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
                     >
                         Back to Projects
                     </button>
                     <button
                         onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}
-                        style={{ padding: '8px 15px', background: 'red', color: 'white', border: 'none', cursor: 'pointer' }}
+                        style={{ padding: '8px 15px', background: 'red', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
                     >
                         Logout
                     </button>
@@ -327,7 +332,7 @@ export default function Tasks() {
             <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
                 <h3>Create New Task</h3>
                 <form onSubmit={handleCreateTask} style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(4, 1fr)' }}>
-                    <select value={projectId} onChange={(e) => setProjectId(e.target.value)} required style={{ padding: '10px', gridColumn: 'span 1' }}>
+                    <select value={projectId} onChange={(e) => setProjectId(e.target.value)} required style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                         <option value="">-- Select Project --</option>
                         {projects.map(p => (
                             <option key={p.id} value={p.id}>{p.name}</option>
@@ -335,13 +340,13 @@ export default function Tasks() {
                     </select>
                     <input
                         type="text" placeholder="Task Title" value={title} onChange={(e) => setTitle(e.target.value)} required
-                        style={{ padding: '10px', gridColumn: 'span 3' }}
+                        style={{ padding: '10px', gridColumn: 'span 3', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
                     <textarea
                         placeholder="Task Description" value={description} onChange={(e) => setDescription(e.target.value)}
-                        style={{ padding: '10px', gridColumn: 'span 4' }}
+                        style={{ padding: '10px', gridColumn: 'span 4', borderRadius: '4px', border: '1px solid #ccc' }}
                     />
-                    <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1' }}>
+                    <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                         <option value="">-- Unassigned --</option>
                         {projectMembers.map(m => (
                             <option key={m.id || m.userId} value={m.userId || m.id}>
@@ -349,7 +354,7 @@ export default function Tasks() {
                             </option>
                         ))}
                     </select>
-                    <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1' }}>
+                    <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
                         <option value="High">High</option>
@@ -357,13 +362,19 @@ export default function Tasks() {
                     </select>
                     <div>
                         <label style={{ display: 'block', fontSize: '12px' }}>Due Date (Optional)</label>
-                        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} />
+                        <input
+                            type="date"
+                            value={dueDate}
+                            min={getSelectedProjectStartDate(projectId)} // UI/UX: Proje başlangıcından öncesi seçilemez!
+                            onChange={(e) => setDueDate(e.target.value)}
+                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                        />
                     </div>
                     <div>
                         <label style={{ display: 'block', fontSize: '12px' }}>Estimated Hours (Optional)</label>
-                        <input type="number" step="0.5" min="0" placeholder="e.g. 4.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} />
+                        <input type="number" step="0.5" min="0" placeholder="e.g. 4.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }} />
                     </div>
-                    <button type="submit" style={{ padding: '10px', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer', gridColumn: 'span 4' }}>
+                    <button type="submit" style={{ padding: '10px', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer', gridColumn: 'span 4', borderRadius: '4px' }}>
                         Add Task
                     </button>
                 </form>
@@ -463,7 +474,13 @@ export default function Tasks() {
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Due Date</label>
-                                        <input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }} />
+                                        <input
+                                            type="date"
+                                            value={editDueDate}
+                                            min={getSelectedProjectStartDate(selectedTask.projectId)}
+                                            onChange={(e) => setEditDueDate(e.target.value)}
+                                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}
+                                        />
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Estimated Hours</label>
@@ -483,6 +500,7 @@ export default function Tasks() {
                                 <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
                                     <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
                                     <span style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority}</b></span>
+                                    {selectedTask.dueDate && <span style={{ padding: '5px 10px', background: '#fffbe6', borderRadius: '4px', color: '#d46b08' }}>Due: <b>{formatDate(selectedTask.dueDate)}</b></span>}
                                     {selectedTask.estimatedHours && <span style={{ padding: '5px 10px', background: '#e6f7ff', borderRadius: '4px', color: '#0050b3' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
                                     <span style={{ padding: '5px 10px', background: '#f6ffed', borderRadius: '4px', color: '#389e0d', border: '1px solid #b7eb8f' }}>
                                         Total Logged: <b>{timeLogs.reduce((acc, log) => acc + log.hours, 0)}h</b>
@@ -508,7 +526,7 @@ export default function Tasks() {
                                                     <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0056b3' }}>{log.hours}h</span>
                                                 </div>
                                                 <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#333' }}>{log.description || 'No description'}</p>
-                                                <span style={{ fontSize: '11px', color: '#888' }}>{new Date(log.workDate).toLocaleDateString()}</span>
+                                                <span style={{ fontSize: '11px', color: '#888' }}>{formatDate(log.workDate)}</span>
                                             </div>
                                         ))
                                     )}
@@ -549,7 +567,7 @@ export default function Tasks() {
                                             <div key={c.id} style={{ background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                                                     <strong style={{ fontSize: '13px' }}>{c.userName}</strong>
-                                                    <span style={{ fontSize: '11px', color: '#888' }}>{new Date(c.createdAt).toLocaleString()}</span>
+                                                    <span style={{ fontSize: '11px', color: '#888' }}>{formatDate(c.createdAt)}</span>
                                                 </div>
                                                 <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
                                                 <button
@@ -587,7 +605,7 @@ export default function Tasks() {
                                 ) : (
                                     histories.map(h => (
                                         <div key={h.id} style={{ fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'flex-start', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
-                                            <span style={{ color: '#888', minWidth: '130px', flexShrink: 0 }}>{new Date(h.createdAt).toLocaleString()}</span>
+                                            <span style={{ color: '#888', minWidth: '130px', flexShrink: 0 }}>{formatDate(h.createdAt)}</span>
                                             <span style={{ color: '#007bff', flexShrink: 0 }}>•</span>
                                             <span style={{ color: '#333' }}>{h.description}</span>
                                         </div>
