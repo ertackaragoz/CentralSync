@@ -8,6 +8,8 @@ export default function Tasks() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    const [currentUserRole, setCurrentUserRole] = useState('');
+
     // New Task States
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -46,6 +48,17 @@ export default function Tasks() {
 
     useEffect(() => {
         fetchInitialData();
+
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role;
+                setCurrentUserRole(role);
+            } catch (e) {
+                console.error("Token could not be parsed.");
+            }
+        }
     }, []);
 
     useEffect(() => {
@@ -95,7 +108,7 @@ export default function Tasks() {
     const formatDate = (dateString) => {
         if (!dateString) return '-';
         const date = new Date(dateString);
-        return date.toLocaleDateString('tr-TR'); // d/m/year formatı
+        return date.toLocaleDateString('tr-TR');
     };
 
     const handleCreateTask = async (e) => {
@@ -138,7 +151,7 @@ export default function Tasks() {
                 await api.delete(`/tasks/${taskId}`);
                 fetchInitialData();
             } catch (err) {
-                alert('Task could not be deleted!');
+                alert(err.response?.data?.message || 'Task could not be deleted!');
             }
         }, 50);
     };
@@ -156,7 +169,7 @@ export default function Tasks() {
                 setHistories(historyRes.data);
             }
         } catch (err) {
-            alert('Task status could not be updated!');
+            alert(err.response?.data?.message || 'Task status could not be updated!');
         }
     };
 
@@ -330,57 +343,59 @@ export default function Tasks() {
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {/* CREATE TASK FORM */}
-            <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-                <h3>Create New Task</h3>
-                <form onSubmit={handleCreateTask} style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(4, 1fr)' }}>
-                    <select value={projectId} onChange={(e) => setProjectId(e.target.value)} required style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
-                        <option value="">-- Select Project --</option>
-                        {projects.map(p => (
-                            <option key={p.id} value={p.id}>{p.name}</option>
-                        ))}
-                    </select>
-                    <input
-                        type="text" placeholder="Task Title" value={title} onChange={(e) => setTitle(e.target.value)} required
-                        style={{ padding: '10px', gridColumn: 'span 3', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                    <textarea
-                        placeholder="Task Description" value={description} onChange={(e) => setDescription(e.target.value)}
-                        style={{ padding: '10px', gridColumn: 'span 4', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                    <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
-                        <option value="">-- Unassigned --</option>
-                        {projectMembers.map(m => (
-                            <option key={m.id || m.userId} value={m.userId || m.id}>
-                                {m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id)}
-                            </option>
-                        ))}
-                    </select>
-                    <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                        <option value="Critical">Critical</option>
-                    </select>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px' }}>Due Date (Optional)</label>
+            {/* CREATE TASK FORM - Sadece Admin veya ProjectManager görebilir */}
+            {(currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
+                <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+                    <h3>Create New Task</h3>
+                    <form onSubmit={handleCreateTask} style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+                        <select value={projectId} onChange={(e) => setProjectId(e.target.value)} required style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
+                            <option value="">-- Select Project --</option>
+                            {projects.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                        </select>
                         <input
-                            type="date"
-                            value={dueDate}
-                            min={getSelectedProjectStartDate(projectId)} // UI/UX: Proje başlangıcından öncesi seçilemez!
-                            onChange={(e) => setDueDate(e.target.value)}
-                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                            type="text" placeholder="Task Title" value={title} onChange={(e) => setTitle(e.target.value)} required
+                            style={{ padding: '10px', gridColumn: 'span 3', borderRadius: '4px', border: '1px solid #ccc' }}
                         />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px' }}>Estimated Hours (Optional)</label>
-                        <input type="number" step="0.5" min="0" placeholder="e.g. 4.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }} />
-                    </div>
-                    <button type="submit" style={{ padding: '10px', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer', gridColumn: 'span 4', borderRadius: '4px' }}>
-                        Add Task
-                    </button>
-                </form>
-            </div>
+                        <textarea
+                            placeholder="Task Description" value={description} onChange={(e) => setDescription(e.target.value)}
+                            style={{ padding: '10px', gridColumn: 'span 4', borderRadius: '4px', border: '1px solid #ccc' }}
+                        />
+                        <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
+                            <option value="">-- Unassigned --</option>
+                            {projectMembers.map(m => (
+                                <option key={m.id || m.userId} value={m.userId || m.id}>
+                                    {m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id)}
+                                </option>
+                            ))}
+                        </select>
+                        <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                        </select>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px' }}>Due Date (Optional)</label>
+                            <input
+                                type="date"
+                                value={dueDate}
+                                min={getSelectedProjectStartDate(projectId)}
+                                onChange={(e) => setDueDate(e.target.value)}
+                                style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                            />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '12px' }}>Estimated Hours (Optional)</label>
+                            <input type="number" step="0.5" min="0" placeholder="e.g. 4.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }} />
+                        </div>
+                        <button type="submit" style={{ padding: '10px', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer', gridColumn: 'span 4', borderRadius: '4px' }}>
+                            Add Task
+                        </button>
+                    </form>
+                </div>
+            )}
 
             {/* KANBAN BOARD */}
             <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'start' }}>
@@ -396,7 +411,11 @@ export default function Tasks() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {tasks.filter(t => t.status === column).map(task => (
                                 <div
-                                    key={task.id} draggable onDragStart={(e) => onDragStart(e, task.id)} onDragEnd={onDragEnd} onClick={() => openTaskModal(task)}
+                                    key={task.id}
+                                    draggable={currentUserRole === 'Admin' || currentUserRole === 'ProjectManager' || currentUserRole === 'TeamMember'}
+                                    onDragStart={(e) => onDragStart(e, task.id)}
+                                    onDragEnd={onDragEnd}
+                                    onClick={() => openTaskModal(task)}
                                     style={{
                                         background: 'white', padding: '15px', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', cursor: 'pointer',
                                         opacity: draggedTaskId === task.id ? 0.4 : 1, transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.15s ease'
@@ -407,7 +426,10 @@ export default function Tasks() {
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
-                                        <button onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
+                                        {/* Sadece yetkililer görev silebilir */}
+                                        {(currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
+                                            <button onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
+                                        )}
                                     </div>
                                     <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>
                                         {task.description ? (task.description.length > 50 ? task.description.substring(0, 50) + '...' : task.description) : 'No details.'}
@@ -434,7 +456,8 @@ export default function Tasks() {
                     <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
 
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
-                            {!isEditingTask && (
+                            {/* TeamMember veya Viewer task detaylarını değiştiremez */}
+                            {!isEditingTask && (currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
                                 <button onClick={handleEditClick} style={{ padding: '6px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
                                     Edit Task
                                 </button>
@@ -534,28 +557,31 @@ export default function Tasks() {
                                     )}
                                 </div>
 
-                                <form onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
-                                    <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
-                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                {/* Sadece Viewer rolü hariç diğerleri log girebilir */}
+                                {currentUserRole !== 'Viewer' && (
+                                    <form onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
+                                        <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <input
+                                                type="number" step="0.5" min="0.5" placeholder="Hours (e.g. 2.5)"
+                                                value={logHours} onChange={(e) => setLogHours(e.target.value)} required
+                                                style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                                            />
+                                            <input
+                                                type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} required
+                                                style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                                            />
+                                        </div>
                                         <input
-                                            type="number" step="0.5" min="0.5" placeholder="Hours (e.g. 2.5)"
-                                            value={logHours} onChange={(e) => setLogHours(e.target.value)} required
-                                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
+                                            type="text" placeholder="What did you work on? (optional)"
+                                            value={logDescription} onChange={(e) => setLogDescription(e.target.value)}
+                                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
                                         />
-                                        <input
-                                            type="date" value={logDate} onChange={(e) => setLogDate(e.target.value)} required
-                                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', flex: 1 }}
-                                        />
-                                    </div>
-                                    <input
-                                        type="text" placeholder="What did you work on? (optional)"
-                                        value={logDescription} onChange={(e) => setLogDescription(e.target.value)}
-                                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                    />
-                                    <button type="submit" style={{ padding: '8px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                                        Log Time
-                                    </button>
-                                </form>
+                                        <button type="submit" style={{ padding: '8px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                                            Log Time
+                                        </button>
+                                    </form>
+                                )}
                             </div>
 
                             {/* Right Panel: Comments */}
@@ -572,29 +598,35 @@ export default function Tasks() {
                                                     <span style={{ fontSize: '11px', color: '#888' }}>{formatDate(c.createdAt)}</span>
                                                 </div>
                                                 <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
-                                                <button
-                                                    onClick={() => handleDeleteComment(c.id)}
-                                                    style={{ background: 'transparent', border: 'none', color: '#bf2600', fontSize: '12px', cursor: 'pointer', padding: 0 }}
-                                                >
-                                                    Delete
-                                                </button>
+                                                {/* Yalnızca Viewer hariç ve yazarın kendisi ise silme çıkar */}
+                                                {currentUserRole !== 'Viewer' && (
+                                                    <button
+                                                        onClick={() => handleDeleteComment(c.id)}
+                                                        style={{ background: 'transparent', border: 'none', color: '#bf2600', fontSize: '12px', cursor: 'pointer', padding: 0 }}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                )}
                                             </div>
                                         ))
                                     )}
                                 </div>
 
-                                <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    <textarea
-                                        placeholder="Write a comment..."
-                                        value={newComment}
-                                        onChange={(e) => setNewComment(e.target.value)}
-                                        required
-                                        style={{ padding: '10px', minHeight: '80px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                    />
-                                    <button type="submit" style={{ padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                                        Post Comment
-                                    </button>
-                                </form>
+                                {/* Sadece Viewer rolü hariç yorum yazabilir */}
+                                {currentUserRole !== 'Viewer' && (
+                                    <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                        <textarea
+                                            placeholder="Write a comment..."
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            required
+                                            style={{ padding: '10px', minHeight: '80px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                        />
+                                        <button type="submit" style={{ padding: '10px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                                            Post Comment
+                                        </button>
+                                    </form>
+                                )}
                             </div>
                         </div>
 

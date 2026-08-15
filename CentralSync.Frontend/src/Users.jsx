@@ -7,15 +7,6 @@ export default function Users() {
     const [error, setError] = useState('');
     const [unauthorized, setUnauthorized] = useState(false);
 
-    const roleNames = {
-        0: 'Admin',
-        1: 'ProjectManager',
-        2: 'TeamMember',
-        'Admin': 'Admin',
-        'ProjectManager': 'ProjectManager',
-        'TeamMember': 'TeamMember'
-    };
-
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -40,7 +31,6 @@ export default function Users() {
 
         try {
             await api.patch(`/users/${userId}/toggle-status`);
-            // UI'ı anında güncelle
             setUsers(users.map(u => u.id === userId ? { ...u, isActive: !u.isActive } : u));
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to toggle user status!');
@@ -51,11 +41,9 @@ export default function Users() {
         if (!window.confirm('Are you sure you want to change this user\'s role?')) return;
 
         try {
-            const roleValue = isNaN(newRole) ? newRole : parseInt(newRole, 10);
+            await api.patch(`/users/${userId}/role`, { Role: newRole });
 
-            await api.patch(`/users/${userId}/role`, { role: roleValue });
-
-            setUsers(users.map(u => u.id === userId ? { ...u, role: roleValue } : u));
+            setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to change user role!');
             fetchUsers();
@@ -133,7 +121,6 @@ export default function Users() {
                                     <td style={{ padding: '15px' }}>{user.department || '-'}</td>
                                     <td style={{ padding: '15px' }}>{formatDate(user.createdAt)}</td>
 
-                                    {/* Role Selection Column */}
                                     <td style={{ padding: '15px' }}>
                                         <select
                                             value={user.role}
@@ -144,17 +131,18 @@ export default function Users() {
                                                 borderRadius: '4px',
                                                 border: '1px solid #ccc',
                                                 background: user.isActive ? 'white' : '#eee',
-                                                cursor: user.isActive ? 'pointer' : 'not-allowed'
+                                                cursor: user.isActive ? 'pointer' : 'not-allowed',
+                                                color: '#000'
                                             }}
                                         >
-                                            {/* (0, 1, 2) or string based on backend enum values*/}
-                                            <option value={0}>Admin</option>
-                                            <option value={1}>Project Manager</option>
-                                            <option value={2}>Team Member</option>
+                                            {/* String values based on JsonStringEnumConverter in backend */}
+                                            <option value="Admin">Admin</option>
+                                            <option value="ProjectManager">Project Manager</option>
+                                            <option value="TeamMember">Team Member</option>
+                                            <option value="Viewer">Viewer</option>
                                         </select>
                                     </td>
 
-                                    {/* Status Badge Column */}
                                     <td style={{ padding: '15px', textAlign: 'center' }}>
                                         <span style={{
                                             padding: '5px 10px',
@@ -168,7 +156,6 @@ export default function Users() {
                                         </span>
                                     </td>
 
-                                    {/* Actions Column */}
                                     <td style={{ padding: '15px', textAlign: 'center' }}>
                                         <button
                                             onClick={() => handleToggleStatus(user.id, user.isActive)}

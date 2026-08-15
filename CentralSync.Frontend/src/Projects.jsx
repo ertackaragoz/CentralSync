@@ -63,6 +63,12 @@ export default function Projects() {
                 <h2>Project Management</h2>
                 <div>
                     <button
+                        onClick={() => { window.location.href = '/users'; }}
+                        style={{ padding: '8px 15px', background: '#6f42c1', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
+                    >
+                        Go to Users (Admin)
+                    </button>
+                    <button
                         onClick={() => { window.location.href = '/tasks'; }}
                         style={{ padding: '8px 15px', background: '#17a2b8', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
                     >
