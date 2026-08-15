@@ -20,11 +20,12 @@ namespace CentralSync.API.Services.Concrete
             _projectRepository = projectRepository;
             _currentUserService = currentUserService;
         }
+
         public async Task<TaskTimeLogDto> AddTaskTimeLogAsync(Guid taskId, CreateTaskTimeLogRequestDto request)
         {
             if (request.Hours < 0)
             {
-                throw new ArgumentException("Task time can't be negative");        
+                throw new ArgumentException("Task time can't be negative");
             }
 
             var task = await _taskRepository.GetByIdAsync(taskId);
@@ -32,18 +33,18 @@ namespace CentralSync.API.Services.Concrete
 
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
 
-            if (project.OwnerId != _currentUserService.UserId)
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
             {
                 var userRoleInProject = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
 
                 if (userRoleInProject == null)
                 {
-                    throw new UnauthorizedAccessException("You need to be a member of this project to add time logs");
+                    throw new UnauthorizedAccessException("You need to be a member of this project to add time logs.");
                 }
 
                 if (userRoleInProject == ProjectMemberRole.Viewer)
                 {
-                    throw new UnauthorizedAccessException("Viewers can't add time logs");
+                    throw new UnauthorizedAccessException("Viewers can't add time logs.");
                 }
             }
 

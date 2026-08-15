@@ -21,14 +21,15 @@ namespace CentralSync.API.Services.Concrete
             _projectRepository = projectRepository;
             _currentUserService = currentUserService;
         }
+
         public async Task<CommentDto> AddCommentAsync(Guid taskId, CreateCommentRequestDto request)
         {
             var task = await _taskRepository.GetByIdAsync(taskId);
-            if (task == null) throw new KeyNotFoundException("Task not found."); 
+            if (task == null) throw new KeyNotFoundException("Task not found.");
 
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
 
-            if (project.OwnerId != _currentUserService.UserId)
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
             {
                 var userRoleInProject = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
 
@@ -42,6 +43,7 @@ namespace CentralSync.API.Services.Concrete
                     throw new UnauthorizedAccessException("Viewers cannot add comments to tasks.");
                 }
             }
+
             var comment = new Comment
             {
                 Content = request.Content,

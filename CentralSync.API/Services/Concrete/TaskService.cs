@@ -23,6 +23,7 @@ namespace CentralSync.API.Services.Concrete
             _taskTimeLogRepository = taskTimeLogRepository;
             _currentUserService = currentUserService;
         }
+
         public async Task<TaskDto> CreateTaskAsync(CreateTaskRequestDto request)
         {
             if (request.EstimatedHours < 0) throw new ArgumentException("Estimated hours cannot be negative.");
@@ -152,19 +153,9 @@ namespace CentralSync.API.Services.Concrete
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
             if (project == null) return false;
 
-            if (project.OwnerId != _currentUserService.UserId)
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
             {
-                var userRoleInProject = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
-
-                if (userRoleInProject == null)
-                {
-                    throw new UnauthorizedAccessException("You must be an active member of this project to update tasks.");
-                }
-
-                if (userRoleInProject == ProjectMemberRole.Viewer)
-                {
-                    throw new UnauthorizedAccessException("Viewers cannot update tasks.");
-                }
+                throw new UnauthorizedAccessException("Only the project owner or an admin can update task details.");
             }
 
             if (request.DueDate.HasValue && request.DueDate.Value.Date < project.StartDate.Date)
@@ -253,9 +244,7 @@ namespace CentralSync.API.Services.Concrete
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
             if (project == null) return false;
 
-            if (_currentUserService.Role != UserRole.Admin &&
-                project.OwnerId != _currentUserService.UserId &&
-                task.AssignedToUserId != _currentUserService.UserId)
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
             {
                 throw new UnauthorizedAccessException("You do not have permission to change the status of this task.");
             }
@@ -293,6 +282,7 @@ namespace CentralSync.API.Services.Concrete
 
             return true;
         }
+
         public async Task<List<TaskHistoryDto>> GetTaskHistoriesAsync(Guid taskId)
         {
             var histories = await _taskHistoryRepository.GetByTaskIdAsync(taskId);
