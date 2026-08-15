@@ -41,7 +41,7 @@ namespace CentralSync.API.Middlewares
             var response = new
             {
                 StatusCode = context.Response.StatusCode,
-                Message = exception.Message
+                message = exception.Message
             };
 
             var jsonResponse = JsonSerializer.Serialize(response);

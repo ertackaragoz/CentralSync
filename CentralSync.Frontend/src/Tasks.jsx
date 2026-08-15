@@ -131,14 +131,16 @@ export default function Tasks() {
         }
     };
 
-    const handleDeleteTask = async (taskId) => {
-        if (!window.confirm('Are you sure you want to delete this task?')) return;
-        try {
-            await api.delete(`/tasks/${taskId}`);
-            fetchInitialData();
-        } catch (err) {
-            alert('Task could not be deleted!');
-        }
+    const handleDeleteTask = (taskId) => {
+        setTimeout(async () => {
+            if (!window.confirm('Are you sure you want to delete this task?')) return;
+            try {
+                await api.delete(`/tasks/${taskId}`);
+                fetchInitialData();
+            } catch (err) {
+                alert('Task could not be deleted!');
+            }
+        }, 50);
     };
 
     const handleStatusChange = async (taskId, newStatus) => {
