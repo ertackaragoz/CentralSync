@@ -9,6 +9,7 @@ export default function Tasks() {
     const [error, setError] = useState('');
 
     const [currentUserRole, setCurrentUserRole] = useState('');
+    const [currentUserId, setCurrentUserId] = useState('');
 
     // New Task States
     const [title, setTitle] = useState('');
@@ -55,6 +56,9 @@ export default function Tasks() {
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role;
                 setCurrentUserRole(role);
+
+                const userId = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || payload.nameid || payload.sub || payload.id;
+                setCurrentUserId(userId);
             } catch (e) {
                 console.error("Token could not be parsed.");
             }
@@ -93,6 +97,15 @@ export default function Tasks() {
         } catch (err) {
             setProjectMembers([]);
         }
+    };
+
+    // Authorization Helper
+    const canManageTask = (task) => {
+        if (!task) return false;
+        if (currentUserRole === 'Admin') return true;
+
+        const project = projects.find(p => p.id === task.projectId);
+        return project && project.ownerId === currentUserId;
     };
 
     const getProjectName = (id) => {
@@ -343,7 +356,7 @@ export default function Tasks() {
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {/* CREATE TASK FORM - Sadece Admin veya ProjectManager görebilir */}
+            {/* Create Task Form */}
             {(currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
                 <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
                     <h3>Create New Task</h3>
@@ -397,7 +410,7 @@ export default function Tasks() {
                 </div>
             )}
 
-            {/* KANBAN BOARD */}
+            {/* Kanban Board */}
             <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'start' }}>
                 {columns.map(column => (
                     <div
@@ -412,7 +425,7 @@ export default function Tasks() {
                             {tasks.filter(t => t.status === column).map(task => (
                                 <div
                                     key={task.id}
-                                    draggable={currentUserRole === 'Admin' || currentUserRole === 'ProjectManager' || currentUserRole === 'TeamMember'}
+                                    draggable={canManageTask(task)}
                                     onDragStart={(e) => onDragStart(e, task.id)}
                                     onDragEnd={onDragEnd}
                                     onClick={() => openTaskModal(task)}
@@ -426,8 +439,7 @@ export default function Tasks() {
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
-                                        {/* Sadece yetkililer görev silebilir */}
-                                        {(currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
+                                        {canManageTask(task) && (
                                             <button onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
                                         )}
                                     </div>
@@ -450,14 +462,13 @@ export default function Tasks() {
                 ))}
             </div>
 
-            {/* TASK DETAILS MODAL */}
+            {/* Task Details Modal */}
             {selectedTask && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
 
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
-                            {/* TeamMember veya Viewer task detaylarını değiştiremez */}
-                            {!isEditingTask && (currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
+                            {!isEditingTask && canManageTask(selectedTask) && (
                                 <button onClick={handleEditClick} style={{ padding: '6px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
                                     Edit Task
                                 </button>
@@ -557,7 +568,6 @@ export default function Tasks() {
                                     )}
                                 </div>
 
-                                {/* Sadece Viewer rolü hariç diğerleri log girebilir */}
                                 {currentUserRole !== 'Viewer' && (
                                     <form onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
                                         <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
@@ -598,7 +608,6 @@ export default function Tasks() {
                                                     <span style={{ fontSize: '11px', color: '#888' }}>{formatDate(c.createdAt)}</span>
                                                 </div>
                                                 <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
-                                                {/* Yalnızca Viewer hariç ve yazarın kendisi ise silme çıkar */}
                                                 {currentUserRole !== 'Viewer' && (
                                                     <button
                                                         onClick={() => handleDeleteComment(c.id)}
@@ -612,7 +621,6 @@ export default function Tasks() {
                                     )}
                                 </div>
 
-                                {/* Sadece Viewer rolü hariç yorum yazabilir */}
                                 {currentUserRole !== 'Viewer' && (
                                     <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                         <textarea
