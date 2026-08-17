@@ -35,76 +35,55 @@ export default function Register() {
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-hero">
-                <div className="brand-glow" aria-hidden="true"></div>
-                <div className="auth-grid"></div>
+        <div className="auth-page centered-layout">
+            {/* Tam Ekran Arka Plan ve Grid */}
+            <div className="brand-glow full-glow" aria-hidden="true"></div>
+            <div className="auth-grid full-grid"></div>
 
-                <div className="brand">
+            {/* Ortalanmış Form Kartı */}
+            <main className="auth-card register-card">
+                <div className="brand centered-brand">
                     <div className="brand-bars"><span></span><span></span><span></span></div>
                     <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
                 </div>
 
-                <div className="auth-hero-content">
-                    <div className="eyebrow green">Proje Yönetim Sistemi</div>
-                    <h1>Ekibinize<br /><span>katılın.</span></h1>
-                    <p>Projelerinizi takip edin, görevlerinizi yönetin ve ekibinizle aynı çalışma alanında buluşun.</p>
-                    <div className="floating-card">
-                        <div className="floating-row">
-                            <div className="avatar">HS</div>
-                            <span className="status-pill green-pill">Workspace Ready</span>
-                        </div>
-                        <div className="skeleton wide"></div>
-                        <div className="skeleton half"></div>
-                    </div>
+                <div className="auth-heading">
+                    <h2>Hesabınızı oluşturun</h2>
+                    <p>Çalışma alanınıza katılmak için bilgilerinizi girin.</p>
                 </div>
 
-                <div className="auth-footer">CENTRALSync v1.2 · © 2026 Heweso</div>
-            </div>
+                {error && <div className="error-box">{error}</div>}
+                {success && <div className="success-box">{success}</div>}
 
-            <div className="auth-panel">
-                <div className="mobile-brand brand">
-                    <div className="brand-bars"><span></span><span></span><span></span></div>
-                    <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
-                </div>
-
-                <main className="auth-form-wrap register-form-wrap">
-                    <div className="auth-heading">
-                        <h2>Hesabınızı oluşturun</h2>
-                        <p>Çalışma alanınıza katılmak için bilgilerinizi girin.</p>
-                    </div>
-
-                    {error && <div className="error-box">{error}</div>}
-                    {success && <div className="success-box">{success}</div>}
-
-                    <form onSubmit={handleRegister} className="auth-form">
-                        <div className="form-grid-two">
-                            <div>
-                                <label>Ad</label>
-                                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Adınız" required />
-                            </div>
-                            <div>
-                                <label>Soyad</label>
-                                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Soyadınız" required />
-                            </div>
+                <form onSubmit={handleRegister} className="auth-form">
+                    <div className="form-grid-two">
+                        <div>
+                            <label>Ad</label>
+                            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Adınız" required />
                         </div>
-
-                        <label>E-posta Adresi</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="samet@gmail.com" required />
-
-                        <label>Şifre</label>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="En az 6 karakter" minLength="6" required />
-
-                        <button type="submit" disabled={loading} className="primary-button">
-                            {loading ? 'Kayıt Yapılıyor...' : 'Kayıt Ol'}
-                        </button>
-                    </form>
-
-                    <div className="auth-switch">
-                        Zaten hesabınız var mı? <button type="button" onClick={() => navigate('/login')}>Giriş yapın</button>
+                        <div>
+                            <label>Soyad</label>
+                            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Soyadınız" required />
+                        </div>
                     </div>
-                </main>
-            </div>
+
+                    <label>E-posta Adresi</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="samet@gmail.com" required />
+
+                    <label>Şifre</label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="En az 6 karakter" minLength="6" required />
+
+                    <button type="submit" disabled={loading} className="primary-button">
+                        {loading ? 'Kayıt Yapılıyor...' : 'Kayıt Ol'}
+                    </button>
+                </form>
+
+                <div className="auth-switch">
+                    Zaten hesabınız var mı? <button type="button" onClick={() => navigate('/login')}>Giriş yapın</button>
+                </div>
+            </main>
+
+            <div className="auth-footer centered-footer">CENTRALSync v1.2 · © 2026 Heweso</div>
         </div>
     );
 }

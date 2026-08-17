@@ -25,64 +25,43 @@ export default function Login() {
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-hero">
-                <div className="brand-glow" aria-hidden="true"></div>
-                <div className="auth-grid"></div>
+        <div className="auth-page centered-layout">
+            {/* Tam Ekran Arka Plan ve Grid */}
+            <div className="brand-glow full-glow" aria-hidden="true"></div>
+            <div className="auth-grid full-grid"></div>
 
-                <div className="brand">
+            {/* Ortalanmış Form Kartı */}
+            <main className="auth-card">
+                <div className="brand centered-brand">
                     <div className="brand-bars"><span></span><span></span><span></span></div>
                     <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
                 </div>
 
-                <div className="auth-hero-content">
-                    <div className="eyebrow green">Proje Yönetim Sistemi</div>
-                    <h1>Tüm süreçleriniz<br /><span>tek bir ekranda.</span></h1>
-                    <p>Görevlerinizi atayın, ekip içi iletişimi sağlayın ve projelerinizin zaman takibini uçtan uca yönetin.</p>
-                    <div className="floating-card">
-                        <div className="floating-row">
-                            <div className="avatar">H</div>
-                            <span className="status-pill green-pill">In Progress</span>
-                        </div>
-                        <div className="skeleton wide"></div>
-                        <div className="skeleton half"></div>
-                    </div>
+                <div className="auth-heading">
+                    <h2>Tekrar hoş geldiniz</h2>
+                    <p>Çalışma alanınıza erişmek için giriş yapın.</p>
                 </div>
 
-                <div className="auth-footer">CENTRALSync v1.2 · © 2026 Heweso</div>
-            </div>
+                {error && <div className="error-box">{error}</div>}
 
-            <div className="auth-panel">
-                <div className="mobile-brand brand">
-                    <div className="brand-bars"><span></span><span></span><span></span></div>
-                    <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
+                <form onSubmit={handleLogin} className="auth-form">
+                    <label>E-posta Adresi</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="samet@gmail.com" required />
+
+                    <label>Şifre</label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
+
+                    <button type="submit" disabled={loading} className="primary-button">
+                        {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
+                    </button>
+                </form>
+
+                <div className="auth-switch">
+                    Hesabınız yok mu? <button type="button" onClick={() => navigate('/register')}>Kayıt olun</button>
                 </div>
+            </main>
 
-                <main className="auth-form-wrap">
-                    <div className="auth-heading">
-                        <h2>Tekrar hoş geldiniz</h2>
-                        <p>Çalışma alanınıza erişmek için giriş yapın.</p>
-                    </div>
-
-                    {error && <div className="error-box">{error}</div>}
-
-                    <form onSubmit={handleLogin} className="auth-form">
-                        <label>E-posta Adresi</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="samet@gmail.com" required />
-
-                        <label>Şifre</label>
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
-
-                        <button type="submit" disabled={loading} className="primary-button">
-                            {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
-                        </button>
-                    </form>
-
-                    <div className="auth-switch">
-                        Hesabınız yok mu? <button type="button" onClick={() => navigate('/register')}>Kayıt olun</button>
-                    </div>
-                </main>
-            </div>
+            <div className="auth-footer centered-footer">CENTRALSync v1.2 · © 2026 Heweso</div>
         </div>
     );
 }
