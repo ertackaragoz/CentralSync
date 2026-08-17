@@ -11,7 +11,6 @@ export default function Tasks() {
     const [currentUserRole, setCurrentUserRole] = useState('');
     const [currentUserId, setCurrentUserId] = useState('');
 
-    // New Task States
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [projectId, setProjectId] = useState('');
@@ -20,15 +19,12 @@ export default function Tasks() {
     const [dueDate, setDueDate] = useState('');
     const [estimatedHours, setEstimatedHours] = useState('');
 
-    // Drag & Drop States
     const [draggedTaskId, setDraggedTaskId] = useState(null);
     const [dragOverColumn, setDragOverColumn] = useState(null);
 
-    // Modal States
     const [selectedTask, setSelectedTask] = useState(null);
     const [isEditingTask, setIsEditingTask] = useState(false);
 
-    // Edit Task States
     const [editTitle, setEditTitle] = useState('');
     const [editDescription, setEditDescription] = useState('');
     const [editAssignedToUserId, setEditAssignedToUserId] = useState('');
@@ -36,13 +32,16 @@ export default function Tasks() {
     const [editDueDate, setEditDueDate] = useState('');
     const [editEstimatedHours, setEditEstimatedHours] = useState('');
 
-    // Comments & Time Logs & History States
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editCommentContent, setEditCommentContent] = useState('');
+
     const [timeLogs, setTimeLogs] = useState([]);
     const [logHours, setLogHours] = useState('');
     const [logDescription, setLogDescription] = useState('');
     const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
+
     const [histories, setHistories] = useState([]);
 
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
@@ -99,7 +98,6 @@ export default function Tasks() {
         }
     };
 
-    // Authorization Helper
     const canManageTask = (task) => {
         if (!task) return false;
         if (currentUserRole === 'Admin') return true;
@@ -159,7 +157,6 @@ export default function Tasks() {
 
     const handleDeleteTask = async (taskId) => {
         const isConfirmed = window.confirm('Are you sure you want to delete this task?');
-
         window.focus();
 
         if (!isConfirmed) return;
@@ -254,6 +251,8 @@ export default function Tasks() {
         setTimeLogs([]);
         setHistories([]);
         setNewComment('');
+        setEditingCommentId(null);
+        setEditCommentContent('');
     };
 
     const handleEditClick = () => {
@@ -301,6 +300,23 @@ export default function Tasks() {
             setComments(res.data);
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to add comment!');
+        }
+    };
+
+    const handleUpdateComment = async (e, commentId) => {
+        e.preventDefault();
+        if (!editCommentContent.trim()) return;
+
+        try {
+            await api.put(`/comments/${commentId}`, { content: editCommentContent });
+
+            setEditingCommentId(null);
+            setEditCommentContent('');
+
+            const res = await api.get(`/tasks/${selectedTask.id}/comments`);
+            setComments(res.data);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to update comment!');
         }
     };
 
@@ -361,7 +377,6 @@ export default function Tasks() {
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {/* Create Task Form */}
             {(currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
                 <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
                     <h3>Create New Task</h3>
@@ -415,7 +430,6 @@ export default function Tasks() {
                 </div>
             )}
 
-            {/* Kanban Board */}
             <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'start' }}>
                 {columns.map(column => (
                     <div
@@ -444,22 +458,9 @@ export default function Tasks() {
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
-                                        {/* Sadece yetkililer görev silebilir */}
                                         {canManageTask(task) && (
                                             <button
-                                                onMouseDown={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                }}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    document.activeElement?.blur();
-
-                                                    setTimeout(() => {
-                                                        handleDeleteTask(task.id);
-                                                    }, 10);
-                                                }}
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
                                                 style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
                                             >
                                                 ×
@@ -485,7 +486,6 @@ export default function Tasks() {
                 ))}
             </div>
 
-            {/* Task Details Modal */}
             {selectedTask && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
@@ -571,7 +571,6 @@ export default function Tasks() {
                         <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                            {/* Left Panel: Time Logs */}
                             <div>
                                 <h3>Time Logs</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', maxHeight: '250px', overflowY: 'auto' }}>
@@ -617,7 +616,6 @@ export default function Tasks() {
                                 )}
                             </div>
 
-                            {/* Right Panel: Comments */}
                             <div>
                                 <h3>Comments</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px', maxHeight: '250px', overflowY: 'auto' }}>
@@ -628,16 +626,49 @@ export default function Tasks() {
                                             <div key={c.id} style={{ background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                                                     <strong style={{ fontSize: '13px' }}>{c.userName}</strong>
-                                                    <span style={{ fontSize: '11px', color: '#888' }}>{formatDate(c.createdAt)}</span>
+                                                    <span style={{ fontSize: '11px', color: '#888' }}>
+                                                        {formatDate(c.createdAt)} {c.updatedAt && '(Edited)'}
+                                                    </span>
                                                 </div>
-                                                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
-                                                {currentUserRole !== 'Viewer' && (
-                                                    <button
-                                                        onClick={() => handleDeleteComment(c.id)}
-                                                        style={{ background: 'transparent', border: 'none', color: '#bf2600', fontSize: '12px', cursor: 'pointer', padding: 0 }}
-                                                    >
-                                                        Delete
-                                                    </button>
+
+                                                {editingCommentId === c.id ? (
+                                                    <form onSubmit={(e) => handleUpdateComment(e, c.id)} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                        <textarea
+                                                            value={editCommentContent}
+                                                            onChange={(e) => setEditCommentContent(e.target.value)}
+                                                            required
+                                                            style={{ padding: '8px', minHeight: '60px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                                        />
+                                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                                            <button type="submit" style={{ padding: '6px 12px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
+                                                                Save
+                                                            </button>
+                                                            <button type="button" onClick={() => setEditingCommentId(null)} style={{ padding: '6px 12px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                ) : (
+                                                    <>
+                                                        <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
+
+                                                        {(currentUserRole === 'Admin' || c.userId === currentUserId) && (
+                                                            <div style={{ display: 'flex', gap: '12px' }}>
+                                                                <button
+                                                                    onClick={() => { setEditingCommentId(c.id); setEditCommentContent(c.content); }}
+                                                                    style={{ background: 'transparent', border: 'none', color: '#ffc107', fontSize: '12px', cursor: 'pointer', padding: 0, fontWeight: 'bold' }}
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteComment(c.id)}
+                                                                    style={{ background: 'transparent', border: 'none', color: '#dc3545', fontSize: '12px', cursor: 'pointer', padding: 0, fontWeight: 'bold' }}
+                                                                >
+                                                                    Delete
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </>
                                                 )}
                                             </div>
                                         ))
@@ -661,7 +692,6 @@ export default function Tasks() {
                             </div>
                         </div>
 
-                        {/* Bottom Panel: Activity History */}
                         <div style={{ marginTop: '30px' }}>
                             <h3 style={{ margin: '0 0 15px 0' }}>Activity History</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto', background: '#fafafa', border: '1px solid #eee', padding: '15px', borderRadius: '6px' }}>
