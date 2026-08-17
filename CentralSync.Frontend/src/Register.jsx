@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from './api';
 
 export default function Register() {
@@ -6,10 +7,10 @@ export default function Register() {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -19,86 +20,90 @@ export default function Register() {
 
         try {
             await api.post('/auth/register', {
-                firstName,
-                lastName,
-                email,
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                email: email.trim().toLowerCase(),
                 password
             });
 
-            setSuccess('Registration successful! Redirecting to login...');
-
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 2000);
+            setSuccess('Kayıt başarılı. Giriş ekranına yönlendiriliyorsunuz...');
+            setTimeout(() => navigate('/login'), 1200);
         } catch (err) {
-            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+            setError(err.response?.data?.message || 'Kayıt başarısız oldu. Lütfen tekrar deneyin.');
             setLoading(false);
         }
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f5f5f5', fontFamily: 'sans-serif' }}>
-            <div style={{ background: 'white', padding: '40px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
-                <h2 style={{ textAlign: 'center', margin: '0 0 20px 0', color: '#333' }}>Create an Account</h2>
+        <div className="auth-page">
+            <div className="auth-hero">
+                <div className="brand-glow" aria-hidden="true"></div>
+                <div className="auth-grid"></div>
 
-                {error && <div style={{ background: '#ffe6e6', color: '#d93025', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>{error}</div>}
-                {success && <div style={{ background: '#e6f4ea', color: '#137333', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '14px', textAlign: 'center' }}>{success}</div>}
-
-                <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px', color: '#555' }}>First Name</label>
-                        <input
-                            type="text"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            required
-                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                        />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px', color: '#555' }}>Last Name</label>
-                        <input
-                            type="text"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            required
-                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                        />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px', color: '#555' }}>Email Address</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                        />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px', color: '#555' }}>Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            minLength="6"
-                            style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        style={{ padding: '12px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold', marginTop: '10px' }}
-                    >
-                        {loading ? 'Registering...' : 'Register'}
-                    </button>
-                </form>
-
-                <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: '#666' }}>
-                    Already have an account? <a href="/login" style={{ color: '#007bff', textDecoration: 'none', fontWeight: 'bold' }}>Login here</a>
+                <div className="brand">
+                    <div className="brand-bars"><span></span><span></span><span></span></div>
+                    <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
                 </div>
+
+                <div className="auth-hero-content">
+                    <div className="eyebrow green">Proje Yönetim Sistemi</div>
+                    <h1>Ekibinize<br /><span>katılın.</span></h1>
+                    <p>Projelerinizi takip edin, görevlerinizi yönetin ve ekibinizle aynı çalışma alanında buluşun.</p>
+                    <div className="floating-card">
+                        <div className="floating-row">
+                            <div className="avatar">HS</div>
+                            <span className="status-pill green-pill">Workspace Ready</span>
+                        </div>
+                        <div className="skeleton wide"></div>
+                        <div className="skeleton half"></div>
+                    </div>
+                </div>
+
+                <div className="auth-footer">CENTRALSync v1.2 · © 2026 Heweso</div>
+            </div>
+
+            <div className="auth-panel">
+                <div className="mobile-brand brand">
+                    <div className="brand-bars"><span></span><span></span><span></span></div>
+                    <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
+                </div>
+
+                <main className="auth-form-wrap register-form-wrap">
+                    <div className="auth-heading">
+                        <h2>Hesabınızı oluşturun</h2>
+                        <p>Çalışma alanınıza katılmak için bilgilerinizi girin.</p>
+                    </div>
+
+                    {error && <div className="error-box">{error}</div>}
+                    {success && <div className="success-box">{success}</div>}
+
+                    <form onSubmit={handleRegister} className="auth-form">
+                        <div className="form-grid-two">
+                            <div>
+                                <label>Ad</label>
+                                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Adınız" required />
+                            </div>
+                            <div>
+                                <label>Soyad</label>
+                                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Soyadınız" required />
+                            </div>
+                        </div>
+
+                        <label>E-posta Adresi</label>
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="samet@gmail.com" required />
+
+                        <label>Şifre</label>
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="En az 6 karakter" minLength="6" required />
+
+                        <button type="submit" disabled={loading} className="primary-button">
+                            {loading ? 'Kayıt Yapılıyor...' : 'Kayıt Ol'}
+                        </button>
+                    </form>
+
+                    <div className="auth-switch">
+                        Zaten hesabınız var mı? <button type="button" onClick={() => navigate('/login')}>Giriş yapın</button>
+                    </div>
+                </main>
             </div>
         </div>
     );

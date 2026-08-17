@@ -60,37 +60,17 @@ export default function Users() {
 
     if (unauthorized) {
         return (
-            <div style={{ padding: '50px', fontFamily: 'sans-serif', textAlign: 'center' }}>
-                <h2 style={{ color: 'red' }}>403 - Access Denied</h2>
+            <div className="access-denied">
+                <h2>403 - Access Denied</h2>
                 <p>You do not have the required Administrator privileges to view this page.</p>
-                <button
-                    onClick={() => { window.location.href = '/projects'; }}
-                    style={{ padding: '10px 20px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginTop: '20px' }}
-                >
-                    Return to Dashboard
-                </button>
             </div>
         );
     }
 
     return (
-        <div style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div className="page-theme" style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="page-title">
                 <h2>User Management (Admin Panel)</h2>
-                <div>
-                    <button
-                        onClick={() => { window.location.href = '/projects'; }}
-                        style={{ padding: '8px 15px', background: '#17a2b8', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
-                    >
-                        Go to Projects
-                    </button>
-                    <button
-                        onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}
-                        style={{ padding: '8px 15px', background: 'red', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-                    >
-                        Logout
-                    </button>
-                </div>
             </div>
 
             {error && <p style={{ color: 'red', background: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>{error}</p>}

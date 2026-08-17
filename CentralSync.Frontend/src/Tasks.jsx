@@ -383,26 +383,9 @@ export default function Tasks() {
     if (loading) return <div style={{ padding: '50px' }}>Loading...</div>;
 
     return (
-        <div style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div className="page-theme" style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="page-title">
                 <h2>Task Management</h2>
-                <div>
-                    <button
-                        onClick={() => { window.location.href = '/projects'; }}
-                        style={{ padding: '8px 15px', background: '#007bff', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
-                    >
-                        Back to Projects
-                    </button>
-                    <button
-                        onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}
-                        style={{ padding: '8px 15px', background: 'red', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-                    >
-                        Logout
-                    </button>
-                    <button onClick={() => { window.location.href = '/time-logs'; }} style={{ padding: '8px 15px', background: '#ffc107', color: '#000', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px', fontWeight: 'bold' }}>
-                        Time Logs
-                    </button>
-                </div>
             </div>
 
             {error && <p style={{ color: 'red' }}>{error}</p>}

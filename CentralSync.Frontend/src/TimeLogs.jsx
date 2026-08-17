@@ -80,29 +80,9 @@ export default function TimeLogs() {
     if (loading) return <div style={{ padding: '50px', fontFamily: 'sans-serif' }}>Loading time logs...</div>;
 
     return (
-        <div style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div className="page-theme" style={{ padding: '30px', fontFamily: 'sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
+            <div className="page-title">
                 <h2>Time Logs & Reports</h2>
-                <div>
-                    <button
-                        onClick={() => { window.location.href = '/projects'; }}
-                        style={{ padding: '8px 15px', background: '#007bff', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
-                    >
-                        Go to Projects
-                    </button>
-                    <button
-                        onClick={() => { window.location.href = '/tasks'; }}
-                        style={{ padding: '8px 15px', background: '#17a2b8', color: 'white', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px' }}
-                    >
-                        Go to Tasks
-                    </button>
-                    <button
-                        onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}
-                        style={{ padding: '8px 15px', background: 'red', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-                    >
-                        Logout
-                    </button>
-                </div>
             </div>
 
             {error && <p style={{ color: 'red', background: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>{error}</p>}
