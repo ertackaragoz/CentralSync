@@ -269,3 +269,27 @@ Frontend tarafı React tabanlıdır ve sayfa/layout ayrımı üzerinden yapılan
 ## 📌 Not
 
 Bu proje, **Heweso Staj Projesi** kapsamında geliştirilmiş bir Proje Yönetim Sistemi uygulamasıdır. Mimari kararlar, güvenlik kuralları ve iş kuralları projenin teknik dokümanında belirtilen gereksinimler doğrultusunda uygulanmıştır.
+
+## 🧪 Seed Data ve Test Kullanıcıları
+
+Projede uygulamanın temel kullanıcı akışlarını ve rol bazlı yetkilendirme sistemini test edebilmek amacıyla başlangıç (seed) verileri kullanılmaktadır.
+
+Database oluşturulduğunda / seed işlemi çalıştırıldığında aşağıdaki test kullanıcıları sisteme eklenir:
+
+| Rol | Ad Soyad | E-posta | Şifre |
+|---|---|---|---|
+| Admin | System Admin | `admin@centralsync.com` | `Admin123!` |
+| Project Manager | Ahmet Yılmaz | `ahmet@centralsync.com` | `Ahmet123!` |
+| Team Member | Zeynep Kaya | `zeynep@centralsync.com` | `Zeynep123!` |
+| Team Member | Vedat Gezen | `vedat@centralsync.com` | `Vedat123!` |
+| Viewer | Ayşe Arslan | `ayse@centralsync.com` | `Ayse123!` |
+
+Bu hesaplar geliştirme ve test amacıyla kullanılmaktadır. Farklı kullanıcı rollerinin sahip olduğu yetkilerin frontend ve API üzerinden doğrulanmasını sağlar.
+
+> **Not:** Bu kullanıcı bilgileri yalnızca lokal geliştirme/test ortamı içindir. Production ortamında bu şifrelerin kullanılmaması ve gerçek kullanıcı hesaplarının güvenli şekilde oluşturulması gerekir.
+
+### Seed verilerinin oluşturulması
+
+Uygulama başlatılırken seed mekanizması çalıştırılır ve geliştirme/test amacıyla tanımlanmış kullanıcılar database'e eklenir.
+
+Seed işlemi sonucunda yukarıda belirtilen test kullanıcıları oluşturulur.
