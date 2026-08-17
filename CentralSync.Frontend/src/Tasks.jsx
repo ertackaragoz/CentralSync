@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from './api';
 
 export default function Tasks() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     const [projects, setProjects] = useState([]);
     const [projectMembers, setProjectMembers] = useState([]);
@@ -81,6 +84,29 @@ export default function Tasks() {
             setAssignedToUserId('');
         }
     }, [projectId]);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const taskId = params.get('taskId');
+        const mode = params.get('mode');
+
+        if (!taskId || !tasks.length) return;
+
+        const task = tasks.find(item => String(item.id) === String(taskId));
+        if (!task || selectedTask) return;
+
+        openTaskModal(task).then(() => {
+            if (mode === 'edit' && canManageTask(task)) {
+                setEditTitle(task.title);
+                setEditDescription(task.description || '');
+                setEditAssignedToUserId(task.assignedToUserId || '');
+                setEditPriority(task.priority || 'Medium');
+                setEditDueDate(task.dueDate ? task.dueDate.split('T')[0] : '');
+                setEditEstimatedHours(task.estimatedHours || '');
+                setIsEditingTask(true);
+            }
+        });
+    }, [location.search, tasks, selectedTask]);
 
     const fetchInitialData = async () => {
         try {
@@ -272,6 +298,9 @@ export default function Tasks() {
         setNewComment('');
         setEditingCommentId(null);
         setEditCommentContent('');
+        if (location.search) {
+            navigate('/tasks', { replace: true });
+        }
     };
 
     const handleEditClick = () => {
@@ -539,12 +568,12 @@ export default function Tasks() {
             </div>
 
             {selectedTask && (
-                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+                <div className="theme-task-modal-backdrop" onMouseDown={e => e.target === e.currentTarget && closeTaskModal()} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+                    <div className="theme-task-modal" style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
+                        <div className="task-modal-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
                             {!isEditingTask && canManageTask(selectedTask) && (
-                                <button onClick={handleEditClick} style={{ padding: '6px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+                                <button className="edit-task-modal-button" onClick={handleEditClick} style={{ padding: '6px 12px', background: '#ffc107', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
                                     Edit Task
                                 </button>
                             )}
@@ -608,9 +637,9 @@ export default function Tasks() {
                                 <h2 style={{ margin: '0 0 10px 0' }}>{selectedTask.title}</h2>
                                 <p style={{ color: '#555', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
 
-                                <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                <div className="task-detail-badges" style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
                                     <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
-                                    <span style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority}</b></span>
+                                    <span className="task-detail-badge priority-badge" style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority || 'Medium'}</b></span>
                                     {selectedTask.dueDate && <span style={{ padding: '5px 10px', background: '#fffbe6', borderRadius: '4px', color: '#d46b08' }}>Due: <b>{formatDate(selectedTask.dueDate)}</b></span>}
                                     {selectedTask.estimatedHours && <span style={{ padding: '5px 10px', background: '#e6f7ff', borderRadius: '4px', color: '#0050b3' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
                                     <span style={{ padding: '5px 10px', background: '#f6ffed', borderRadius: '4px', color: '#389e0d', border: '1px solid #b7eb8f' }}>
@@ -625,7 +654,7 @@ export default function Tasks() {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
                             <div>
                                 <h3>Time Logs</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', maxHeight: '250px', overflowY: 'auto' }}>
+                                <div className="task-interaction-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', maxHeight: '250px', overflowY: 'auto' }}>
                                     {timeLogs.length === 0 ? (
                                         <p style={{ fontSize: '13px', color: '#888' }}>No time logged yet.</p>
                                     ) : (
@@ -643,7 +672,7 @@ export default function Tasks() {
                                 </div>
 
                                 {currentUserRole !== 'Viewer' && (
-                                    <form onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
+                                    <form className="add-time-log-form" onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
                                         <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
                                         <div style={{ display: 'flex', gap: '10px' }}>
                                             <input
@@ -744,7 +773,7 @@ export default function Tasks() {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: '30px' }}>
+                        <div className="activity-history" style={{ marginTop: '30px' }}>
                             <h3 style={{ margin: '0 0 15px 0' }}>Activity History</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto', background: '#fafafa', border: '1px solid #eee', padding: '15px', borderRadius: '6px' }}>
                                 {histories.length === 0 ? (

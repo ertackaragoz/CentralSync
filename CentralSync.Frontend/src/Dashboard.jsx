@@ -6,6 +6,8 @@ export default function Dashboard() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     const [timeLogs, setTimeLogs] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [selectedDashboardTask, setSelectedDashboardTask] = useState(null);
     const [currentUserId, setCurrentUserId] = useState('');
     const [currentUserRole, setCurrentUserRole] = useState('');
     const [currentUserName, setCurrentUserName] = useState('Kullanıcı');
@@ -52,11 +54,13 @@ export default function Dashboard() {
             try {
                 const results = await Promise.allSettled([
                     api.get('/tasks', { params: { pageSize: 1000 } }),
-                    api.get('/users')
+                    api.get('/users'),
+                    api.get('/projects', { params: { pageSize: 1000 } })
                 ]);
 
                 const tasksResponse = results[0];
                 const usersResponse = results[1];
+                const projectsResponse = results[2];
 
                 if (tasksResponse.status === 'fulfilled') {
                     setTasks(tasksResponse.value.data.items || tasksResponse.value.data || []);
@@ -64,6 +68,10 @@ export default function Dashboard() {
 
                 if (usersResponse.status === 'fulfilled') {
                     setUsers(usersResponse.value.data.items || usersResponse.value.data || []);
+                }
+
+                if (projectsResponse.status === 'fulfilled') {
+                    setProjects(projectsResponse.value.data.items || projectsResponse.value.data || []);
                 }
             } catch (err) {
                 if (err.response?.status === 401) {
@@ -143,7 +151,31 @@ export default function Dashboard() {
         Done: 'Done'
     }[status] || status);
 
-    const openTask = task => navigate(`/tasks?taskId=${task.id}`);
+    const openTask = task => setSelectedDashboardTask(task);
+
+    const canManageDashboardTask = task => {
+        if (!task) return false;
+        if (currentUserRole === 'Admin') return true;
+        const project = projects.find(p => String(p.id) === String(task.projectId));
+        return Boolean(project && String(project.ownerId) === String(currentUserId));
+    };
+
+    const interactWithDashboardTask = task => {
+        setSelectedDashboardTask(null);
+        navigate(`/tasks?taskId=${task.id}&mode=interact`);
+    };
+
+    const editDashboardTask = task => {
+        setSelectedDashboardTask(null);
+        navigate(`/tasks?taskId=${task.id}&mode=edit`);
+    };
+
+    const priorityClass = priority => {
+        if (priority === 'Critical') return 'critical';
+        if (priority === 'High') return 'high';
+        if (priority === 'Medium') return 'medium';
+        return 'low';
+    };
 
     const loadReviews = async () => {
         setReviewsLoading(true);
@@ -234,7 +266,10 @@ export default function Dashboard() {
                             ) : activeTasks.slice(0, 8).map(task => (
                                 <button key={task.id} className="task-preview-row" onClick={() => openTask(task)}>
                                     <div><i className={`task-dot ${statusClass(task.status)}`}></i><span>{task.title}</span></div>
-                                    <em className={statusClass(task.status)}>{statusLabel(task.status)}</em>
+                                    <div className="task-preview-meta">
+                                        <em className={priorityClass(task.priority)}>{task.priority || 'Medium'}</em>
+                                        <em className={statusClass(task.status)}>{statusLabel(task.status)}</em>
+                                    </div>
                                 </button>
                             ))}
                         </div>
@@ -276,7 +311,10 @@ export default function Dashboard() {
                             {[...activeTasks, ...completedTasks].map(task => (
                                 <button key={task.id} className="modal-task" onClick={() => openTask(task)}>
                                     <div><i className={`task-dot ${statusClass(task.status)}`}></i><span>{task.title}</span></div>
-                                    <em className={statusClass(task.status)}>{statusLabel(task.status)}</em>
+                                    <div className="task-preview-meta">
+                                        <em className={priorityClass(task.priority)}>{task.priority || 'Medium'}</em>
+                                        <em className={statusClass(task.status)}>{statusLabel(task.status)}</em>
+                                    </div>
                                 </button>
                             ))}
                             {myTasks.length === 0 && <div className="empty-state">Sana atanmış görev bulunmuyor.</div>}
@@ -313,6 +351,37 @@ export default function Dashboard() {
                                     </button>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {selectedDashboardTask && (
+                <div className="theme-modal-backdrop" onMouseDown={e => e.target === e.currentTarget && setSelectedDashboardTask(null)}>
+                    <div className="theme-modal dashboard-task-modal">
+                        <div className="modal-heading">
+                            <h3>{selectedDashboardTask.title}</h3>
+                            <button onClick={() => setSelectedDashboardTask(null)}>×</button>
+                        </div>
+
+                        <div className="dashboard-task-summary">
+                            <p>{selectedDashboardTask.description || 'Açıklama bulunmuyor.'}</p>
+
+                            <div className="dashboard-task-badges">
+                                <span className={`task-detail-badge status-badge ${statusClass(selectedDashboardTask.status)}`}>
+                                    Status: {statusLabel(selectedDashboardTask.status)}
+                                </span>
+                                <span className={`task-detail-badge priority-badge ${priorityClass(selectedDashboardTask.priority)}`}>
+                                    Priority: {selectedDashboardTask.priority || 'Medium'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-task-actions">
+                            <button className="primary-button" onClick={() => interactWithDashboardTask(selectedDashboardTask)}>Interact</button>
+                            {canManageDashboardTask(selectedDashboardTask) && (
+                                <button className="secondary-button" onClick={() => editDashboardTask(selectedDashboardTask)}>Edit Task</button>
+                            )}
                         </div>
                     </div>
                 </div>
