@@ -57,7 +57,7 @@ namespace CentralSync.API.Data
                     IsActive = true,
                     IsDeleted = false
                 };
-                await context.Users.AddRangeAsync(adminUser, testUser);
+                await context.Users.AddRangeAsync(adminUser, testUser, testUser2, testUser3);
                 await context.SaveChangesAsync();
             }
         }
