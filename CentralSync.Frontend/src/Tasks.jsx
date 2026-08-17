@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api from './api';
+import { loadProjectRoles } from './projectAccess';
 
 export default function Tasks() {
     const location = useLocation();
     const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [projectRoles, setProjectRoles] = useState({});
+    const [projectRolesLoading, setProjectRolesLoading] = useState(true);
     const [projectMembers, setProjectMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -77,6 +80,18 @@ export default function Tasks() {
     }, [currentPage, filterProjectId, filterPriority, filterDueBefore, filterDueAfter]);
 
     useEffect(() => {
+        if (!currentUserId || !projects.length) {
+            setProjectRolesLoading(false);
+            return;
+        }
+
+        setProjectRolesLoading(true);
+        loadProjectRoles(api, projects, currentUserId)
+            .then(setProjectRoles)
+            .finally(() => setProjectRolesLoading(false));
+    }, [currentUserId, projects]);
+
+    useEffect(() => {
         if (projectId) {
             fetchProjectMembers(projectId);
         } else {
@@ -143,12 +158,31 @@ export default function Tasks() {
         }
     };
 
+    const getProjectRole = task => task ? projectRoles[task.projectId] || null : null;
+
+    const isViewerInProject = task => getProjectRole(task) === 'Viewer';
+
     const canManageTask = (task) => {
-        if (!task) return false;
+        if (!task || projectRolesLoading || isViewerInProject(task)) return false;
         if (currentUserRole === 'Admin') return true;
 
-        const project = projects.find(p => p.id === task.projectId);
-        return project && project.ownerId === currentUserId;
+        const project = projects.find(p => String(p.id) === String(task.projectId));
+        return Boolean(project && String(project.ownerId) === String(currentUserId));
+    };
+
+    const canInteractWithTask = task => {
+        if (!task || projectRolesLoading || isViewerInProject(task)) return false;
+        return Boolean(getProjectRole(task) || canManageTask(task));
+    };
+
+    const canChangeTaskStatus = task => {
+        if (!task || projectRolesLoading || isViewerInProject(task)) return false;
+        if (currentUserRole === 'Admin') return true;
+
+        const project = projects.find(p => String(p.id) === String(task.projectId));
+        if (project && String(project.ownerId) === String(currentUserId)) return true;
+
+        return ['Member', 'Contributor'].includes(getProjectRole(task));
     };
 
     const getProjectName = (id) => {
@@ -425,7 +459,7 @@ export default function Tasks() {
                     <form onSubmit={handleCreateTask} style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(4, 1fr)' }}>
                         <select value={projectId} onChange={(e) => setProjectId(e.target.value)} required style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                             <option value="">-- Select Project --</option>
-                            {projects.map(p => (
+                            {projects.filter(p => currentUserRole === 'Admin' || String(p.ownerId) === String(currentUserId)).map(p => (
                                 <option key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </select>
@@ -439,7 +473,7 @@ export default function Tasks() {
                         />
                         <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                             <option value="">-- Unassigned --</option>
-                            {projectMembers.map(m => (
+                            {projectMembers.filter(m => m.role !== 'Viewer').map(m => (
                                 <option key={m.id || m.userId} value={m.userId || m.id}>
                                     {m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id)}
                                 </option>
@@ -515,7 +549,7 @@ export default function Tasks() {
                             {tasks.filter(t => t.status === column).map(task => (
                                 <div
                                     key={task.id}
-                                    draggable={canManageTask(task)}
+                                    draggable={canChangeTaskStatus(task)}
                                     onDragStart={(e) => onDragStart(e, task.id)}
                                     onDragEnd={onDragEnd}
                                     onClick={() => openTaskModal(task)}
@@ -596,7 +630,7 @@ export default function Tasks() {
                                         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold' }}>Assign To</label>
                                         <select value={editAssignedToUserId} onChange={(e) => setEditAssignedToUserId(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box' }}>
                                             <option value="">-- Unassigned --</option>
-                                            {projectMembers.map(m => (
+                                            {projectMembers.filter(m => m.role !== 'Viewer').map(m => (
                                                 <option key={m.id || m.userId} value={m.userId || m.id}>
                                                     {m.firstName ? `${m.firstName} ${m.lastName}` : (m.userId || m.id)}
                                                 </option>
@@ -671,7 +705,7 @@ export default function Tasks() {
                                     )}
                                 </div>
 
-                                {currentUserRole !== 'Viewer' && (
+                                {canInteractWithTask(selectedTask) && (
                                     <form className="add-time-log-form" onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
                                         <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
                                         <div style={{ display: 'flex', gap: '10px' }}>
@@ -733,7 +767,7 @@ export default function Tasks() {
                                                     <>
                                                         <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
 
-                                                        {(currentUserRole === 'Admin' || c.userId === currentUserId) && (
+                                                        {canInteractWithTask(selectedTask) && (currentUserRole === 'Admin' || String(c.userId) === String(currentUserId)) && (
                                                             <div style={{ display: 'flex', gap: '12px' }}>
                                                                 <button
                                                                     onClick={() => { setEditingCommentId(c.id); setEditCommentContent(c.content); }}
@@ -756,7 +790,7 @@ export default function Tasks() {
                                     )}
                                 </div>
 
-                                {currentUserRole !== 'Viewer' && (
+                                {canInteractWithTask(selectedTask) && (
                                     <form onSubmit={handleAddComment} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                         <textarea
                                             placeholder="Write a comment..."

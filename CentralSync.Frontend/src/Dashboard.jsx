@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
+import { loadProjectRoles } from './projectAccess';
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
     const [timeLogs, setTimeLogs] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [projectRoles, setProjectRoles] = useState({});
+    const [projectRolesLoading, setProjectRolesLoading] = useState(true);
     const [selectedDashboardTask, setSelectedDashboardTask] = useState(null);
     const [currentUserId, setCurrentUserId] = useState('');
     const [currentUserRole, setCurrentUserRole] = useState('');
@@ -40,7 +43,7 @@ export default function Dashboard() {
             const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role || '';
             const first = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || payload.given_name || payload.firstName || payload.firstname || '';
             const last = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || payload.family_name || payload.lastName || payload.lastname || '';
-            const fullName = payload.name || payload.fullName || payload.displayName || '';
+            const fullName = payload.name || payload.FullName || payload.fullName || payload.displayName || '';
             const email = payload.email || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '';
             setCurrentUserId(String(id));
             setCurrentUserRole(role);
@@ -63,20 +66,14 @@ export default function Dashboard() {
             try {
                 const results = await Promise.allSettled([
                     api.get('/tasks', { params: { pageSize: 1000 } }),
-                    api.get('/users'),
                     api.get('/projects', { params: { pageSize: 1000 } })
                 ]);
 
                 const tasksResponse = results[0];
-                const usersResponse = results[1];
-                const projectsResponse = results[2];
+                const projectsResponse = results[1];
 
                 if (tasksResponse.status === 'fulfilled') {
                     setTasks(tasksResponse.value.data.items || tasksResponse.value.data || []);
-                }
-
-                if (usersResponse.status === 'fulfilled') {
-                    setUsers(usersResponse.value.data.items || usersResponse.value.data || []);
                 }
 
                 if (projectsResponse.status === 'fulfilled') {
@@ -94,6 +91,24 @@ export default function Dashboard() {
 
         load();
     }, [navigate]);
+
+    useEffect(() => {
+        if (currentUserRole !== 'Admin') {
+            setUsers([]);
+            return;
+        }
+
+        const loadUsers = async () => {
+            try {
+                const response = await api.get('/users');
+                setUsers(response.data.items || response.data || []);
+            } catch {
+                setUsers([]);
+            }
+        };
+
+        loadUsers();
+    }, [currentUserRole]);
 
     useEffect(() => {
         const loadTimeLogs = async () => {
@@ -126,6 +141,18 @@ export default function Dashboard() {
             if (me.role) setCurrentUserRole(me.role);
         }
     }, [currentUserId, users]);
+
+    useEffect(() => {
+        if (!currentUserId || !projects.length) {
+            setProjectRolesLoading(false);
+            return;
+        }
+
+        setProjectRolesLoading(true);
+        loadProjectRoles(api, projects, currentUserId)
+            .then(setProjectRoles)
+            .finally(() => setProjectRolesLoading(false));
+    }, [currentUserId, projects]);
 
     useEffect(() => {
         if (!currentUserId || currentUserName !== 'Kullanıcı' || !timeLogs.length) return;
@@ -187,11 +214,23 @@ export default function Dashboard() {
 
     const openTask = task => setSelectedDashboardTask(task);
 
+    const getDashboardProjectRole = task => task ? projectRoles[task.projectId] || null : null;
+
     const canManageDashboardTask = task => {
-        if (!task) return false;
+        if (!task || projectRolesLoading) return false;
+
+        const projectRole = getDashboardProjectRole(task);
+        if (projectRole === 'Viewer') return false;
+
         if (currentUserRole === 'Admin') return true;
+
         const project = projects.find(p => String(p.id) === String(task.projectId));
         return Boolean(project && String(project.ownerId) === String(currentUserId));
+    };
+
+    const canInteractWithDashboardTask = task => {
+        if (!task || projectRolesLoading) return false;
+        return getDashboardProjectRole(task) !== 'Viewer';
     };
 
     const interactWithDashboardTask = task => {
@@ -412,7 +451,9 @@ export default function Dashboard() {
                         </div>
 
                         <div className="dashboard-task-actions">
-                            <button className="primary-button" onClick={() => interactWithDashboardTask(selectedDashboardTask)}>Interact</button>
+                            {canInteractWithDashboardTask(selectedDashboardTask) && (
+                                <button className="primary-button" onClick={() => interactWithDashboardTask(selectedDashboardTask)}>Interact</button>
+                            )}
                             {canManageDashboardTask(selectedDashboardTask) && (
                                 <button className="secondary-button" onClick={() => editDashboardTask(selectedDashboardTask)}>Edit Task</button>
                             )}

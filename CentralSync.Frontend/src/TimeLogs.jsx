@@ -20,14 +20,17 @@ export default function TimeLogs() {
         if (token) {
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role;
+                const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role || '';
                 setCurrentUserRole(role);
-            } catch (e) {
-                console.error("Token could not be parsed.");
+            } catch {
+                setCurrentUserRole('');
             }
         }
-        fetchInitialData();
     }, []);
+
+    useEffect(() => {
+        if (currentUserRole) fetchInitialData();
+    }, [currentUserRole]);
 
     useEffect(() => {
         fetchTimeLogs();
@@ -35,12 +38,21 @@ export default function TimeLogs() {
 
     const fetchInitialData = async () => {
         try {
-            const [usersRes, tasksRes] = await Promise.all([
-                api.get('/users'),
-                api.get('/tasks', { params: { pageSize: 1000 } })
-            ]);
-            setUsers(usersRes.data.items || usersRes.data);
-            setTasks(tasksRes.data.items || tasksRes.data);
+            const tasksRes = await api.get('/tasks', { params: { pageSize: 1000 } });
+            setTasks(tasksRes.data.items || tasksRes.data || []);
+
+            if (currentUserRole === 'Admin') {
+                try {
+                    const usersRes = await api.get('/users');
+                    setUsers(usersRes.data.items || usersRes.data || []);
+                } catch {
+                    setUsers([]);
+                }
+            } else {
+                setUsers([]);
+                setFilterUserId('');
+            }
+
             await fetchTimeLogs();
         } catch (err) {
             setError('Error loading initial filter data.');
@@ -88,7 +100,7 @@ export default function TimeLogs() {
             {error && <p style={{ color: 'red', background: '#ffe6e6', padding: '10px', borderRadius: '4px' }}>{error}</p>}
 
             <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', background: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                {currentUserRole !== 'TeamMember' && (
+                {currentUserRole === 'Admin' && (
                     <div>
                         <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>User</label>
                         <select value={filterUserId} onChange={(e) => setFilterUserId(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '180px' }}>
