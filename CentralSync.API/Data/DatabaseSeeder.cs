@@ -31,7 +31,7 @@ namespace CentralSync.API.Data
                     LastName = "Yılmaz",
                     Email = "ahmet@centralsync.com",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Ahmet123!"),
-                    Role = UserRole.TeamMember,
+                    Role = UserRole.ProjectManager,
                     IsActive = true,
                     IsDeleted = false
                 };
@@ -57,7 +57,18 @@ namespace CentralSync.API.Data
                     IsActive = true,
                     IsDeleted = false
                 };
-                await context.Users.AddRangeAsync(adminUser, testUser, testUser2, testUser3);
+
+                var testUser4 = new User
+                {
+                    FirstName = "Ayşe",
+                    LastName = "Arslan",
+                    Email = "ayse@centralsync.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Ayse123!"),
+                    Role = UserRole.Viewer,
+                    IsActive = true,
+                    IsDeleted = false
+                };
+                await context.Users.AddRangeAsync(adminUser, testUser, testUser2, testUser3, testUser4);
                 await context.SaveChangesAsync();
             }
         }
