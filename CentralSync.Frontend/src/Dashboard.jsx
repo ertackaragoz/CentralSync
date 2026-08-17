@@ -314,11 +314,6 @@ export default function Dashboard() {
                     </h1>
                     <p>Projelerini takip et, sana atanan görevleri yönet, ekibinle yorumlaş ve çalışma sürelerini tek bir ekrandan kaydet.</p>
 
-                    <div className="dashboard-actions">
-                        <button className="primary-button dashboard-button" onClick={() => setShowTasksModal(true)}>Tüm Görevlerim</button>
-                        <button className="secondary-button dashboard-button" onClick={openReviews}>İncelemeler</button>
-                    </div>
-
                     <div className="stats-row">
                         <div className="stat-card"><span>Aktif Görev</span><strong>{activeTasks.length}</strong></div>
                         <div className="stat-card"><span>Tamamlanan</span><strong className="green-text">{completedTasks.length}</strong></div>
