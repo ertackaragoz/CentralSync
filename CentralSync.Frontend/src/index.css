@@ -1987,3 +1987,71 @@ button {
         padding: 32px 24px;
     }
 }
+
+.kanban-board-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+.kanban-column {
+    background: #303038;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 400px;
+    transition: background 0.2s ease;
+    border: 1px solid rgba(107, 114, 128, 0.28);
+}
+
+.kanban-column.drag-over {
+    background: #414149;
+}
+
+.kanban-column h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #f3f4f6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.kanban-card {
+    background: #414149;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    border: 1px solid rgba(107, 114, 128, 0.28);
+}
+
+.kanban-card:hover {
+    border-color: var(--accent-soft);
+}
+
+.form-card,
+.filter-card,
+.edit-task-form,
+.comment-item,
+.time-log-item,
+.history-container {
+    background: #303038;
+    border: 1px solid rgba(107, 114, 128, 0.28);
+}
+
+.assignee-pill {
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 12px;
+    font-weight: 800;
+}
+
+.assignee-pill.assigned {
+    background: rgba(167, 243, 208, 0.12);
+    color: var(--accent-green);
+}
+
+.assignee-pill.unassigned {
+    background: rgba(248, 113, 113, 0.12);
+    color: #f87171;
+}

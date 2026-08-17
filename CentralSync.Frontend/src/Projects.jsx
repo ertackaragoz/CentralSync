@@ -96,7 +96,8 @@ export default function Projects() {
                 description,
                 startDate: startDate ? new Date(startDate).toISOString() : null,
                 endDate: endDate ? new Date(endDate).toISOString() : null,
-                status
+                status,
+                ownerId: currentUserId
             });
 
             setName('');
@@ -109,7 +110,6 @@ export default function Projects() {
             alert(err.response?.data?.message || 'Project could not be created!');
         }
     };
-
     const openEditModal = (project) => {
         setEditModalProject(project);
         setEditName(project.name);
@@ -131,7 +131,8 @@ export default function Projects() {
                 description: editDescription,
                 startDate: editStartDate ? new Date(editStartDate).toISOString() : null,
                 endDate: editEndDate ? new Date(editEndDate).toISOString() : null,
-                status: editStatus
+                status: editStatus,
+                ownerId: editModalProject.ownerId
             });
             closeEditModal();
             fetchProjects();

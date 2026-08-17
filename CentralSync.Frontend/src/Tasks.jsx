@@ -454,8 +454,8 @@ export default function Tasks() {
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {(currentUserRole === 'Admin' || currentUserRole === 'ProjectManager') && (
-                <div style={{ background: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-                    <h3>Create New Task</h3>
+                <div className="form-card" style={{ padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+                    <h3 style={{ marginTop: 0 }}>Create New Task</h3>
                     <form onSubmit={handleCreateTask} style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(4, 1fr)' }}>
                         <select value={projectId} onChange={(e) => setProjectId(e.target.value)} required style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                             <option value="">-- Select Project --</option>
@@ -465,11 +465,11 @@ export default function Tasks() {
                         </select>
                         <input
                             type="text" placeholder="Task Title" value={title} onChange={(e) => setTitle(e.target.value)} required
-                            style={{ padding: '10px', gridColumn: 'span 3', borderRadius: '4px', border: '1px solid #ccc' }}
+                            style={{ padding: '10px', gridColumn: 'span 3', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)' }}
                         />
                         <textarea
                             placeholder="Task Description" value={description} onChange={(e) => setDescription(e.target.value)}
-                            style={{ padding: '10px', gridColumn: 'span 4', borderRadius: '4px', border: '1px solid #ccc' }}
+                            style={{ padding: '10px', gridColumn: 'span 4', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)' }}
                         />
                         <select value={assignedToUserId} onChange={(e) => setAssignedToUserId(e.target.value)} style={{ padding: '10px', gridColumn: 'span 1', borderRadius: '4px' }}>
                             <option value="">-- Unassigned --</option>
@@ -492,12 +492,12 @@ export default function Tasks() {
                                 value={dueDate}
                                 min={getSelectedProjectStartDate(projectId)}
                                 onChange={(e) => setDueDate(e.target.value)}
-                                style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                                style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)' }}
                             />
                         </div>
                         <div>
                             <label style={{ display: 'block', fontSize: '12px' }}>Estimated Hours (Optional)</label>
-                            <input type="number" step="0.5" min="0" placeholder="e.g. 4.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }} />
+                            <input type="number" step="0.5" min="0" placeholder="e.g. 4.5" value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)} style={{ padding: '10px', width: '100%', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)' }} />
                         </div>
                         <button type="submit" style={{ padding: '10px', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer', gridColumn: 'span 4', borderRadius: '4px' }}>
                             Add Task
@@ -506,17 +506,17 @@ export default function Tasks() {
                 </div>
             )}
 
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', background: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div className="filter-card" style={{ display: 'flex', gap: '10px', marginBottom: '20px', padding: '15px', borderRadius: '8px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                 <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Project</label>
-                    <select value={filterProjectId} onChange={(e) => { setFilterProjectId(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px' }}>
+                    <select value={filterProjectId} onChange={(e) => { setFilterProjectId(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)', minWidth: '150px' }}>
                         <option value="">All Projects</option>
                         {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
                 <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Priority</label>
-                    <select value={filterPriority} onChange={(e) => { setFilterPriority(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px' }}>
+                    <select value={filterPriority} onChange={(e) => { setFilterPriority(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)', minWidth: '150px' }}>
                         <option value="">All Priorities</option>
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
@@ -526,11 +526,11 @@ export default function Tasks() {
                 </div>
                 <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Due After</label>
-                    <input type="date" value={filterDueAfter} onChange={(e) => { setFilterDueAfter(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                    <input type="date" value={filterDueAfter} onChange={(e) => { setFilterDueAfter(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)' }} />
                 </div>
                 <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Due Before</label>
-                    <input type="date" value={filterDueBefore} onChange={(e) => { setFilterDueBefore(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                    <input type="date" value={filterDueBefore} onChange={(e) => { setFilterDueBefore(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid rgba(107, 114, 128, 0.55)' }} />
                 </div>
                 <button onClick={clearFilters} style={{ padding: '8px 15px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', height: '35px' }}>Clear</button>
             </div>
@@ -542,9 +542,9 @@ export default function Tasks() {
                         onDragOver={(e) => onDragOver(e, column)}
                         onDragLeave={onDragLeave}
                         onDrop={(e) => onDrop(e, column)}
-                        style={{ background: dragOverColumn === column ? '#d3d5db' : '#ebecf0', padding: '15px', borderRadius: '8px', minHeight: '400px', transition: 'background 0.2s ease' }}
+                        className={`kanban-column ${dragOverColumn === column ? 'drag-over' : ''}`}
                     >
-                        <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#172b4d', textTransform: 'uppercase' }}>{column}</h3>
+                        <h3>{column}</h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {tasks.filter(t => t.status === column).map(task => (
                                 <div
@@ -553,34 +553,36 @@ export default function Tasks() {
                                     onDragStart={(e) => onDragStart(e, task.id)}
                                     onDragEnd={onDragEnd}
                                     onClick={() => openTaskModal(task)}
+                                    className="kanban-card"
                                     style={{
-                                        background: 'white', padding: '15px', borderRadius: '6px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', cursor: 'pointer',
-                                        opacity: draggedTaskId === task.id ? 0.4 : 1, transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)', transition: 'all 0.15s ease'
+                                        opacity: draggedTaskId === task.id ? 0.4 : 1,
+                                        transform: draggedTaskId === task.id ? 'scale(0.98)' : 'scale(1)',
+                                        transition: 'all 0.15s ease'
                                     }}
                                 >
                                     <div style={{ fontSize: '10px', color: '#888', marginBottom: '5px', textTransform: 'uppercase', fontWeight: 'bold' }}>
                                         {getProjectName(task.projectId)}
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
+                                        <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word', color: '#f3f4f6' }}>{task.title}</h4>
                                         {canManageTask(task) && (
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
-                                                style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
+                                                style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
                                             >
                                                 ×
                                             </button>
                                         )}
                                     </div>
-                                    <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>
+                                    <p style={{ fontSize: '12px', color: '#9ca3af', margin: '0 0 10px 0' }}>
                                         {task.description ? (task.description.length > 50 ? task.description.substring(0, 50) + '...' : task.description) : 'No details.'}
                                     </p>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
                                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? 'red' : task.priority === 'High' ? 'orange' : 'gray' }}>{task.priority}</span>
-                                            {task.estimatedHours && <span style={{ fontSize: '11px', color: '#666' }}>Est: {task.estimatedHours}h</span>}
+                                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: task.priority === 'Critical' ? '#f87171' : task.priority === 'High' ? 'var(--accent-soft)' : '#94a3b8' }}>{task.priority}</span>
+                                            {task.estimatedHours && <span style={{ fontSize: '11px', color: '#6b7280' }}>Est: {task.estimatedHours}h</span>}
                                         </div>
-                                        <div style={{ fontSize: '10px', background: task.assignedToUserId ? '#e3fcef' : '#ffebe6', color: task.assignedToUserId ? '#006644' : '#bf2600', padding: '3px 6px', borderRadius: '12px', fontWeight: 'bold' }}>
+                                        <div className={`assignee-pill ${task.assignedToUserId ? 'assigned' : 'unassigned'}`}>
                                             {task.assignedToUserId ? `👤 ${task.assignedToUserFirstName || ''} ${task.assignedToUserLastName || ''}`.trim() : 'Unassigned'}
                                         </div>
                                     </div>
@@ -603,7 +605,7 @@ export default function Tasks() {
 
             {selectedTask && (
                 <div className="theme-task-modal-backdrop" onMouseDown={e => e.target === e.currentTarget && closeTaskModal()} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                    <div className="theme-task-modal" style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
+                    <div className="theme-task-modal" style={{ padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}>
 
                         <div className="task-modal-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
                             {!isEditingTask && canManageTask(selectedTask) && (
@@ -615,7 +617,7 @@ export default function Tasks() {
                         </div>
 
                         {isEditingTask ? (
-                            <form onSubmit={handleUpdateTask} style={{ background: '#fffbcc', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+                            <form className="edit-task-form" onSubmit={handleUpdateTask} style={{ padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
                                 <h3 style={{ margin: '0 0 15px 0' }}>Edit Task Details</h3>
                                 <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr 1fr' }}>
                                     <div style={{ gridColumn: 'span 2' }}>
@@ -669,21 +671,21 @@ export default function Tasks() {
                         ) : (
                             <>
                                 <h2 style={{ margin: '0 0 10px 0' }}>{selectedTask.title}</h2>
-                                <p style={{ color: '#555', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
+                                <p style={{ color: '#d1d5db', marginBottom: '20px' }}>{selectedTask.description || 'No description provided.'}</p>
 
                                 <div className="task-detail-badges" style={{ display: 'flex', gap: '15px', marginBottom: '20px', fontSize: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
-                                    <span style={{ padding: '5px 10px', background: '#e3fcef', borderRadius: '4px', color: '#006644' }}>Status: <b>{selectedTask.status}</b></span>
-                                    <span className="task-detail-badge priority-badge" style={{ padding: '5px 10px', background: '#ebecf0', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority || 'Medium'}</b></span>
-                                    {selectedTask.dueDate && <span style={{ padding: '5px 10px', background: '#fffbe6', borderRadius: '4px', color: '#d46b08' }}>Due: <b>{formatDate(selectedTask.dueDate)}</b></span>}
-                                    {selectedTask.estimatedHours && <span style={{ padding: '5px 10px', background: '#e6f7ff', borderRadius: '4px', color: '#0050b3' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
-                                    <span style={{ padding: '5px 10px', background: '#f6ffed', borderRadius: '4px', color: '#389e0d', border: '1px solid #b7eb8f' }}>
+                                    <span className="task-detail-badge" style={{ padding: '5px 10px', borderRadius: '4px' }}>Status: <b>{selectedTask.status}</b></span>
+                                    <span className="task-detail-badge priority-badge" style={{ padding: '5px 10px', borderRadius: '4px' }}>Priority: <b>{selectedTask.priority || 'Medium'}</b></span>
+                                    {selectedTask.dueDate && <span className="task-detail-badge" style={{ padding: '5px 10px', borderRadius: '4px' }}>Due: <b>{formatDate(selectedTask.dueDate)}</b></span>}
+                                    {selectedTask.estimatedHours && <span className="task-detail-badge" style={{ padding: '5px 10px', borderRadius: '4px' }}>Estimated: <b>{selectedTask.estimatedHours}h</b></span>}
+                                    <span className="task-detail-badge" style={{ padding: '5px 10px', borderRadius: '4px', border: '1px solid var(--accent-green)', color: 'var(--accent-green)' }}>
                                         Total Logged: <b>{timeLogs.reduce((acc, log) => acc + log.hours, 0)}h</b>
                                     </span>
                                 </div>
                             </>
                         )}
 
-                        <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
+                        <hr style={{ border: 'none', borderTop: '1px solid rgba(107, 114, 128, 0.28)', margin: '20px 0' }} />
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
                             <div>
@@ -693,12 +695,12 @@ export default function Tasks() {
                                         <p style={{ fontSize: '13px', color: '#888' }}>No time logged yet.</p>
                                     ) : (
                                         timeLogs.map(log => (
-                                            <div key={log.id} style={{ background: '#f0f7ff', padding: '12px', borderRadius: '6px', borderLeft: '4px solid #007bff' }}>
+                                            <div className="time-log-item" key={log.id} style={{ padding: '12px', borderRadius: '6px', borderLeft: '4px solid #007bff' }}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                                                     <strong style={{ fontSize: '13px' }}>{log.userFullName}</strong>
-                                                    <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0056b3' }}>{log.hours}h</span>
+                                                    <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#3b82f6' }}>{log.hours}h</span>
                                                 </div>
-                                                <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#333' }}>{log.description || 'No description'}</p>
+                                                <p style={{ margin: '0 0 5px 0', fontSize: '13px' }}>{log.description || 'No description'}</p>
                                                 <span style={{ fontSize: '11px', color: '#888' }}>{formatDate(log.workDate)}</span>
                                             </div>
                                         ))
@@ -706,7 +708,7 @@ export default function Tasks() {
                                 </div>
 
                                 {canInteractWithTask(selectedTask) && (
-                                    <form className="add-time-log-form" onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
+                                    <form className="add-time-log-form" onSubmit={handleAddTimeLog} style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '15px', borderRadius: '6px' }}>
                                         <h4 style={{ margin: 0, fontSize: '14px' }}>Add Time Log</h4>
                                         <div style={{ display: 'flex', gap: '10px' }}>
                                             <input
@@ -738,7 +740,7 @@ export default function Tasks() {
                                         <p style={{ fontSize: '13px', color: '#888' }}>No comments yet.</p>
                                     ) : (
                                         comments.map(c => (
-                                            <div key={c.id} style={{ background: '#f9f9f9', padding: '15px', borderRadius: '6px' }}>
+                                            <div className="comment-item" key={c.id} style={{ padding: '15px', borderRadius: '6px' }}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                                                     <strong style={{ fontSize: '13px' }}>{c.userName}</strong>
                                                     <span style={{ fontSize: '11px', color: '#888' }}>
@@ -765,7 +767,7 @@ export default function Tasks() {
                                                     </form>
                                                 ) : (
                                                     <>
-                                                        <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>{c.content}</p>
+                                                        <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>{c.content}</p>
 
                                                         {canInteractWithTask(selectedTask) && (currentUserRole === 'Admin' || String(c.userId) === String(currentUserId)) && (
                                                             <div style={{ display: 'flex', gap: '12px' }}>
@@ -809,15 +811,15 @@ export default function Tasks() {
 
                         <div className="activity-history" style={{ marginTop: '30px' }}>
                             <h3 style={{ margin: '0 0 15px 0' }}>Activity History</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto', background: '#fafafa', border: '1px solid #eee', padding: '15px', borderRadius: '6px' }}>
+                            <div className="history-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto', padding: '15px', borderRadius: '6px' }}>
                                 {histories.length === 0 ? (
                                     <p style={{ fontSize: '13px', color: '#888', margin: 0 }}>No activity recorded yet.</p>
                                 ) : (
                                     histories.map(h => (
-                                        <div key={h.id} style={{ fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'flex-start', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
+                                        <div key={h.id} style={{ fontSize: '13px', display: 'flex', gap: '12px', alignItems: 'flex-start', borderBottom: '1px solid rgba(107, 114, 128, 0.28)', paddingBottom: '8px' }}>
                                             <span style={{ color: '#888', minWidth: '130px', flexShrink: 0 }}>{formatDate(h.createdAt)}</span>
                                             <span style={{ color: '#007bff', flexShrink: 0 }}>•</span>
-                                            <span style={{ color: '#333' }}>{h.description}</span>
+                                            <span>{h.description}</span>
                                         </div>
                                     ))
                                 )}
