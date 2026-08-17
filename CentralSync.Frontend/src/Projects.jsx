@@ -209,6 +209,10 @@ export default function Projects() {
         return new Date(dateString).toLocaleDateString('tr-TR');
     };
 
+    // UI'da seçilen kullanıcının sistem rolünü kontrol ediyoruz
+    const selectedUserObj = users.find(u => u.id === newMemberUserId);
+    const isSelectedUserViewer = selectedUserObj?.role === 'Viewer';
+
     if (loading) return <div style={{ padding: '50px' }}>Loading...</div>;
 
     return (
@@ -358,16 +362,51 @@ export default function Projects() {
                         <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '6px', marginBottom: '20px' }}>
                             <h4 style={{ margin: '0 0 15px 0' }}>Add New Member</h4>
                             <form onSubmit={handleAddMember} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                <select value={newMemberUserId} onChange={(e) => setNewMemberUserId(e.target.value)} required style={{ flex: 2, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}>
+                                <select
+                                    value={newMemberUserId}
+                                    onChange={(e) => {
+                                        const selectedId = e.target.value;
+                                        setNewMemberUserId(selectedId);
+
+                                        // Kullanıcı seçildiğinde eğer Viewer ise rolünü otomatik Viewer'a çekiyoruz
+                                        const user = users.find(u => u.id === selectedId);
+                                        if (user?.role === 'Viewer') {
+                                            setNewMemberRole('Viewer');
+                                        } else {
+                                            setNewMemberRole('Member'); // Başka birine geçilirse Member'a sıfırlanıyor
+                                        }
+                                    }}
+                                    required
+                                    style={{ flex: 2, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                >
                                     <option value="">-- Select User --</option>
                                     {users.filter(u => u.isActive && !projectMembers.some(pm => pm.userId === u.id)).map(user => (
                                         <option key={user.id} value={user.id}>{user.firstName} {user.lastName} ({user.email})</option>
                                     ))}
                                 </select>
-                                <select value={newMemberRole} onChange={(e) => setNewMemberRole(e.target.value)} style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}>
-                                    <option value="Member">Member</option>
-                                    <option value="Contributor">Contributor</option>
-                                    <option value="Viewer">Viewer</option>
+
+                                <select
+                                    value={newMemberRole}
+                                    onChange={(e) => setNewMemberRole(e.target.value)}
+                                    disabled={isSelectedUserViewer}
+                                    style={{
+                                        flex: 1,
+                                        padding: '10px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #ccc',
+                                        backgroundColor: isSelectedUserViewer ? '#e9ecef' : 'transparent',
+                                        cursor: isSelectedUserViewer ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
+                                    {isSelectedUserViewer ? (
+                                        <option value="Viewer">Viewer</option>
+                                    ) : (
+                                        <>
+                                            <option value="Member">Member</option>
+                                            <option value="Contributor">Contributor</option>
+                                            <option value="Viewer">Viewer</option>
+                                        </>
+                                    )}
                                 </select>
                                 <button type="submit" style={{ padding: '10px 20px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Add</button>
                             </form>
