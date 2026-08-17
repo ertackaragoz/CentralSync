@@ -21,9 +21,21 @@ namespace CentralSync.API.Repositories.Concrete
             return task;
         }
 
-        public async Task<IEnumerable<ProjectTask>> GetAllTasksAsync(Guid? projectId, Guid? assignedToUserId, ProjectTaskStatus? status, ProjectTaskPriority? priority, DateTime? dueBefore, DateTime? dueAfter, string? sortBy, string? sortDirection, int page, int pageSize)
+        public async Task<IEnumerable<ProjectTask>> GetAllTasksAsync(Guid? projectId, Guid? assignedToUserId, ProjectTaskStatus? status, ProjectTaskPriority? priority, DateTime? dueBefore, DateTime? dueAfter, string? sortBy, string? sortDirection, int page, int pageSize, Guid currentUserId, bool isAdmin)
         {
             var query = _dbcontext.Tasks.AsQueryable();
+
+            if (!isAdmin)
+            {
+                query = query.Where(task =>
+                    _dbcontext.Projects.Any(project =>
+                        project.Id == task.ProjectId &&
+                        (project.OwnerId == currentUserId ||
+                         _dbcontext.ProjectMembers.Any(member =>
+                             member.ProjectId == project.Id &&
+                             member.UserId == currentUserId &&
+                             member.IsActive))));
+            }
 
             if (projectId.HasValue) query = query.Where(t => t.ProjectId == projectId.Value);
             if (assignedToUserId.HasValue) query = query.Where(t => t.AssignedToUserId == assignedToUserId.Value);

@@ -1,4 +1,4 @@
-﻿using CentralSync.API.Models.Domain;
+using CentralSync.API.Models.Domain;
 using CentralSync.API.Models.Domain.Enums;
 using CentralSync.API.Models.DTO;
 using CentralSync.API.Repositories.Abstract;
@@ -19,65 +19,34 @@ namespace CentralSync.API.Services.Concrete
 
         public async Task<IEnumerable<ProjectDto>> GetAllProjectsAsync(int page, int pageSize, ProjectStatus? status)
         {
-            var projectsDomain = await _projectRepository.GetAllProjectsAsync(page, pageSize, status);
+            var projectsDomain = await _projectRepository.GetAllProjectsAsync(
+                page,
+                pageSize,
+                status,
+                _currentUserService.UserId,
+                _currentUserService.Role == UserRole.Admin);
 
-            var projectsDto = new List<ProjectDto>();
-
-            foreach (var projectDomain in projectsDomain)
-            {
-                projectsDto.Add(new ProjectDto()
-                {
-                    Id = projectDomain.Id,
-                    Name = projectDomain.Name,
-                    Description = projectDomain.Description,
-                    StartDate = projectDomain.StartDate,
-                    Status = projectDomain.Status,
-                    ArchivedAt = projectDomain.ArchivedAt,
-                    CreatedAt = projectDomain.CreatedAt,
-                    IsArchived = projectDomain.IsArchived,
-                    UpdatedAt = projectDomain.UpdatedAt,
-                    EndDate = projectDomain.EndDate,
-                    OwnerId = projectDomain.OwnerId
-                });
-            }
-            return projectsDto;
+            return projectsDomain.Select(MapProject).ToList();
         }
 
         public async Task<ProjectDto?> GetProjectByIdAsync(Guid projectId)
         {
-            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null) return null;
 
-            if (projectDomainModel == null) { return null; }
-
-            return new ProjectDto()
-            {
-                Id = projectDomainModel.Id,
-                Name = projectDomainModel.Name,
-                Description = projectDomainModel.Description,
-                StartDate = projectDomainModel.StartDate,
-                EndDate = projectDomainModel.EndDate,
-                Status = projectDomainModel.Status,
-                ArchivedAt = projectDomainModel.ArchivedAt,
-                CreatedAt = projectDomainModel.CreatedAt,
-                IsArchived = projectDomainModel.IsArchived,
-                OwnerId = projectDomainModel.OwnerId,
-                UpdatedAt = projectDomainModel.UpdatedAt,
-            };
+            await EnsureProjectReadableAsync(project);
+            return MapProject(project);
         }
 
         public async Task<ProjectDto> CreateProjectAsync(CreateProjectRequestDto request)
         {
             if (request.EndDate != null && DateTime.UtcNow.Date > request.EndDate.Value.Date)
-            {
                 throw new ArgumentException("End date can't be a day in the past");
-            }
 
             if (request.EndDate < request.StartDate)
-            {
                 throw new ArgumentException("The end date cannot be set before the start date.");
-            }
 
-            var projectDomainModel = new Project()
+            var project = new Project
             {
                 Name = request.Name,
                 Description = request.Description,
@@ -86,35 +55,27 @@ namespace CentralSync.API.Services.Concrete
                 Status = request.Status,
                 OwnerId = _currentUserService.UserId,
                 IsArchived = false,
-                IsDeleted = false,
+                IsDeleted = false
             };
 
-            await _projectRepository.AddProjectAsync(projectDomainModel);
-
-            return new ProjectDto()
-            {
-                Id = projectDomainModel.Id,
-                Name = projectDomainModel.Name,
-                Description = projectDomainModel.Description,
-                StartDate = projectDomainModel.StartDate,
-                EndDate = projectDomainModel.EndDate,
-                Status = projectDomainModel.Status,
-                OwnerId = projectDomainModel.OwnerId,
-                IsArchived = projectDomainModel.IsArchived,
-                ArchivedAt = projectDomainModel.ArchivedAt,
-                CreatedAt = projectDomainModel.CreatedAt,
-                UpdatedAt = projectDomainModel.UpdatedAt,
-            };
+            await _projectRepository.AddProjectAsync(project);
+            return MapProject(project);
         }
 
         public async Task<ProjectMemberDto> AddMemberToProjectAsync(Guid projectId, AddProjectMemberRequestDto request)
         {
-            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null) throw new KeyNotFoundException("Project not found");
+            if (project.IsArchived) throw new InvalidOperationException("Can't add member to archived project.");
 
-            if (projectDomainModel == null) { throw new KeyNotFoundException("Project not found"); }
-            if (projectDomainModel.IsArchived) { throw new InvalidOperationException("Can't add member to archived project."); }
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
+                throw new UnauthorizedAccessException("Only the project owner or an admin can manage project members.");
 
-            var projectMemberDomain = new ProjectMember()
+            var existingRole = await _projectRepository.GetUserRoleInProjectAsync(projectId, request.UserId);
+            if (existingRole.HasValue)
+                throw new InvalidOperationException("This user is already an active member of the project.");
+
+            var member = new ProjectMember
             {
                 ProjectId = projectId,
                 UserId = request.UserId,
@@ -122,74 +83,76 @@ namespace CentralSync.API.Services.Concrete
                 IsActive = true
             };
 
-            await _projectRepository.AddMemberToProjectAsync(projectMemberDomain);
+            await _projectRepository.AddMemberToProjectAsync(member);
 
-            return new ProjectMemberDto()
+            return new ProjectMemberDto
             {
-                Id = projectMemberDomain.Id,
-                ProjectId = projectMemberDomain.ProjectId,
-                UserId = projectMemberDomain.UserId,
-                Role = projectMemberDomain.Role,
-                IsActive = projectMemberDomain.IsActive,
-                JoinedAt = projectMemberDomain.JoinedAt
+                Id = member.Id,
+                ProjectId = member.ProjectId,
+                UserId = member.UserId,
+                Role = member.Role,
+                IsActive = member.IsActive,
+                JoinedAt = member.JoinedAt
             };
         }
 
         public async Task<bool> UpdateProjectAsync(Guid projectId, UpdateProjectRequestDto request)
         {
             if (request.EndDate < request.StartDate)
-            {
                 throw new ArgumentException("The end date cannot be set before the start date.");
-            }
 
-            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null) return false;
+            if (project.IsArchived) throw new InvalidOperationException("Archived projects can't be updated");
 
-            if (projectDomainModel == null) { return false; }
-            if (projectDomainModel.IsArchived) { throw new InvalidOperationException("Archived projects can't be updated"); }
-            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId) { throw new UnauthorizedAccessException("No access to make changes in this project."); }
+            EnsureProjectOwnerOrAdmin(project);
 
-            projectDomainModel.Name = request.Name;
-            projectDomainModel.Description = request.Description;
-            projectDomainModel.StartDate = request.StartDate;
-            projectDomainModel.EndDate = request.EndDate;
+            project.Name = request.Name;
+            project.Description = request.Description;
+            project.StartDate = request.StartDate;
+            project.EndDate = request.EndDate;
 
-            await _projectRepository.UpdateAsync(projectDomainModel);
+            await _projectRepository.UpdateAsync(project);
             return true;
         }
 
         public async Task<bool> ArchiveProjectAsync(Guid projectId, ArchiveProjectRequestDto request)
         {
-            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null) return false;
 
-            if (projectDomainModel == null) return false;
-            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId) { throw new UnauthorizedAccessException("No access to make changes in this project."); }
+            EnsureProjectOwnerOrAdmin(project);
 
-            projectDomainModel.IsArchived = request.IsArchived;
-            projectDomainModel.ArchivedAt = request.IsArchived ? DateTime.UtcNow : null;
+            project.IsArchived = request.IsArchived;
+            project.ArchivedAt = request.IsArchived ? DateTime.UtcNow : null;
 
-            await _projectRepository.UpdateAsync(projectDomainModel);
+            await _projectRepository.UpdateAsync(project);
             return true;
         }
 
         public async Task<bool> DeleteProjectAsync(Guid projectId)
         {
-            var projectDomainModel = await _projectRepository.GetByIdAsync(projectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null) return false;
 
-            if (projectDomainModel == null) { return false; }
-            if (_currentUserService.Role != UserRole.Admin && projectDomainModel.OwnerId != _currentUserService.UserId) { throw new UnauthorizedAccessException("No access to make changes in this project."); }
+            EnsureProjectOwnerOrAdmin(project);
+            project.IsDeleted = true;
 
-            projectDomainModel.IsDeleted = true;
-
-            await _projectRepository.UpdateAsync(projectDomainModel);
+            await _projectRepository.UpdateAsync(project);
             return true;
         }
 
         public async Task<List<ProjectMemberDto>> GetProjectMembersAsync(Guid id, ProjectMemberRole? role)
         {
+            var project = await _projectRepository.GetByIdAsync(id);
+            if (project == null) return null;
+
+            await EnsureProjectReadableAsync(project);
+
             var members = await _projectRepository.GetProjectMembersAsync(id, role);
             if (members == null) return null;
 
-            var dtoList = members.Select(pm => new ProjectMemberDto
+            return members.Select(pm => new ProjectMemberDto
             {
                 Id = pm.Id,
                 ProjectId = pm.ProjectId,
@@ -198,10 +161,41 @@ namespace CentralSync.API.Services.Concrete
                 LastName = pm.User.LastName,
                 Role = pm.Role,
                 JoinedAt = pm.JoinedAt,
-                IsActive = pm.IsActive,
+                IsActive = pm.IsActive
             }).ToList();
+        }
 
-            return dtoList;
+        private async Task EnsureProjectReadableAsync(Project project)
+        {
+            if (_currentUserService.Role == UserRole.Admin) return;
+            if (project.OwnerId == _currentUserService.UserId) return;
+
+            var isMember = await _projectRepository.IsUserActiveMemberAsync(project.Id, _currentUserService.UserId);
+            if (!isMember) throw new UnauthorizedAccessException("You must be an active member of this project.");
+        }
+
+        private void EnsureProjectOwnerOrAdmin(Project project)
+        {
+            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
+                throw new UnauthorizedAccessException("Only the project owner or an admin can manage this project.");
+        }
+
+        private static ProjectDto MapProject(Project project)
+        {
+            return new ProjectDto
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Description = project.Description,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                Status = project.Status,
+                ArchivedAt = project.ArchivedAt,
+                CreatedAt = project.CreatedAt,
+                IsArchived = project.IsArchived,
+                OwnerId = project.OwnerId,
+                UpdatedAt = project.UpdatedAt
+            };
         }
     }
 }

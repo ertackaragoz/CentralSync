@@ -1,4 +1,4 @@
-﻿using CentralSync.API.Models.Domain;
+using CentralSync.API.Models.Domain;
 
 namespace CentralSync.API.Repositories.Abstract
 {
@@ -6,6 +6,6 @@ namespace CentralSync.API.Repositories.Abstract
     {
         Task<TaskTimeLog> AddAsync(TaskTimeLog taskTimeLog);
         Task<List<TaskTimeLog>> GetByTaskIdAsync(Guid taskId);
-        Task<List<TaskTimeLog>> GetAllAsync(Guid? userId, Guid? taskId, DateTime? startDate, DateTime? endDate);
+        Task<List<TaskTimeLog>> GetAllAsync(Guid? userId, Guid? taskId, DateTime? startDate, DateTime? endDate, Guid currentUserId, bool isAdmin);
     }
 }

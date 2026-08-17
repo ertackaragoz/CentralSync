@@ -1,9 +1,8 @@
-﻿using CentralSync.API.Models.Domain;
+using CentralSync.API.Models.Domain;
 using CentralSync.API.Models.Domain.Enums;
 using CentralSync.API.Models.DTO;
 using CentralSync.API.Repositories.Abstract;
 using CentralSync.API.Services.Abstract;
-using System.ComponentModel.Design;
 
 namespace CentralSync.API.Services.Concrete
 {
@@ -28,21 +27,9 @@ namespace CentralSync.API.Services.Concrete
             if (task == null) throw new KeyNotFoundException("Task not found.");
 
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
+            if (project == null) throw new KeyNotFoundException("Project not found.");
 
-            if (_currentUserService.Role != UserRole.Admin && project.OwnerId != _currentUserService.UserId)
-            {
-                var userRoleInProject = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
-
-                if (userRoleInProject == null)
-                {
-                    throw new UnauthorizedAccessException("You must be an active member of this project to comment.");
-                }
-
-                if (userRoleInProject == ProjectMemberRole.Viewer)
-                {
-                    throw new UnauthorizedAccessException("Viewers cannot add comments to tasks.");
-                }
-            }
+            await EnsureCanWriteAsync(project);
 
             var comment = new Comment
             {
@@ -69,11 +56,8 @@ namespace CentralSync.API.Services.Concrete
         {
             var comment = await _commentRepository.GetByIdAsync(commentId);
             if (comment == null) return false;
-
             if (_currentUserService.Role != UserRole.Admin && comment.UserId != _currentUserService.UserId)
-            {
                 throw new UnauthorizedAccessException("You can only delete your own comments.");
-            }
 
             comment.IsDeleted = true;
             await _commentRepository.UpdateAsync(comment);
@@ -82,16 +66,16 @@ namespace CentralSync.API.Services.Concrete
 
         public async Task<List<CommentDto>> GetByTaskIdAsync(Guid taskId)
         {
+            var task = await _taskRepository.GetByIdAsync(taskId);
+            if (task == null) throw new KeyNotFoundException("Task not found.");
+
+            await EnsureCanReadAsync(task.ProjectId);
+
             var comments = await _commentRepository.GetByTaskIdAsync(taskId);
             return comments.Select(c => new CommentDto
             {
-                Id = c.Id,
-                Content = c.Content,
-                TaskId = c.TaskId,
-                UserId = c.UserId,
-                UserName = $"{c.User.FirstName} {c.User.LastName}",
-                CreatedAt = c.CreatedAt,
-                UpdatedAt = c.UpdatedAt
+                Id = c.Id, Content = c.Content, TaskId = c.TaskId, UserId = c.UserId,
+                UserName = $"{c.User.FirstName} {c.User.LastName}", CreatedAt = c.CreatedAt, UpdatedAt = c.UpdatedAt
             }).ToList();
         }
 
@@ -99,16 +83,38 @@ namespace CentralSync.API.Services.Concrete
         {
             var comment = await _commentRepository.GetByIdAsync(commentId);
             if (comment == null) return false;
-
             if (_currentUserService.Role != UserRole.Admin && comment.UserId != _currentUserService.UserId)
-            {
                 throw new UnauthorizedAccessException("You can only edit your own comments.");
-            }
 
             comment.Content = request.Content;
-
             await _commentRepository.UpdateAsync(comment);
             return true;
+        }
+
+        private async Task EnsureCanWriteAsync(Project project)
+        {
+            if (project.OwnerId == _currentUserService.UserId) return;
+
+            var role = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
+            if (role == ProjectMemberRole.Viewer)
+                throw new UnauthorizedAccessException("Viewers cannot add comments to tasks.");
+
+            if (role.HasValue && (role.Value == ProjectMemberRole.Member || role.Value == ProjectMemberRole.Contributor))
+                return;
+
+            if (_currentUserService.Role == UserRole.Admin) return;
+
+            throw new UnauthorizedAccessException("You must be an active member of this project to comment.");
+        }
+
+        private async Task EnsureCanReadAsync(Guid projectId)
+        {
+            if (_currentUserService.Role == UserRole.Admin) return;
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null) throw new KeyNotFoundException("Project not found.");
+            if (project.OwnerId == _currentUserService.UserId) return;
+            if (!await _projectRepository.IsUserActiveMemberAsync(projectId, _currentUserService.UserId))
+                throw new UnauthorizedAccessException("You must be an active member of this project.");
         }
     }
 }

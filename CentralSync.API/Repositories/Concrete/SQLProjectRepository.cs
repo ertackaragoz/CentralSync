@@ -28,9 +28,19 @@ namespace CentralSync.API.Repositories.Concrete
             return project;
         }
 
-        public async Task<List<Project>> GetAllProjectsAsync(int page = 1, int pageSize = 10, ProjectStatus? status = null)
+        public async Task<List<Project>> GetAllProjectsAsync(int page = 1, int pageSize = 10, ProjectStatus? status = null, Guid? currentUserId = null, bool isAdmin = false)
         {
             var projects = _dbcontext.Projects.AsQueryable();
+
+            if (!isAdmin && currentUserId.HasValue)
+            {
+                projects = projects.Where(project =>
+                    project.OwnerId == currentUserId.Value ||
+                    _dbcontext.ProjectMembers.Any(member =>
+                        member.ProjectId == project.Id &&
+                        member.UserId == currentUserId.Value &&
+                        member.IsActive));
+            }
 
             if (status.HasValue)
             {
@@ -70,9 +80,19 @@ namespace CentralSync.API.Repositories.Concrete
 
         public async Task<ProjectMemberRole?> GetUserRoleInProjectAsync(Guid projectId, Guid userId)
         {
-            var member = await _dbcontext.ProjectMembers.Where(pm => pm.ProjectId == projectId && pm.UserId == userId && pm.IsActive).FirstOrDefaultAsync();
+            var member = await _dbcontext.ProjectMembers
+                .Where(pm => pm.ProjectId == projectId && pm.UserId == userId && pm.IsActive)
+                .FirstOrDefaultAsync();
 
             return member?.Role;
+        }
+
+        public async Task<bool> IsUserActiveMemberAsync(Guid projectId, Guid userId)
+        {
+            return await _dbcontext.ProjectMembers.AnyAsync(pm =>
+                pm.ProjectId == projectId &&
+                pm.UserId == userId &&
+                pm.IsActive);
         }
     }
 }
