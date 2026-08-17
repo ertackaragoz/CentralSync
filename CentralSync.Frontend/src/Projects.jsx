@@ -10,20 +10,17 @@ export default function Projects() {
     const [currentUserRole, setCurrentUserRole] = useState('');
     const [currentUserId, setCurrentUserId] = useState('');
 
-    // Create Project States
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [status, setStatus] = useState('Planning');
 
-    // Team Management Modal States
     const [teamModalProject, setTeamModalProject] = useState(null);
     const [projectMembers, setProjectMembers] = useState([]);
     const [newMemberUserId, setNewMemberUserId] = useState('');
     const [newMemberRole, setNewMemberRole] = useState('Member');
 
-    // Edit Project Modal States
     const [editModalProject, setEditModalProject] = useState(null);
     const [editName, setEditName] = useState('');
     const [editDescription, setEditDescription] = useState('');
@@ -31,9 +28,11 @@ export default function Projects() {
     const [editEndDate, setEditEndDate] = useState('');
     const [editStatus, setEditStatus] = useState('Planning');
 
-    useEffect(() => {
-        fetchProjects();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [filterStatus, setFilterStatus] = useState('');
 
+    useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -49,10 +48,21 @@ export default function Projects() {
         }
     }, []);
 
+    useEffect(() => {
+        fetchProjects();
+    }, [currentPage, filterStatus]);
+
     const fetchProjects = async () => {
         try {
-            const res = await api.get('/projects');
+            const params = {
+                page: currentPage,
+                pageSize: 10
+            };
+            if (filterStatus) params.status = filterStatus;
+
+            const res = await api.get('/projects', { params });
             setProjects(res.data.items || res.data);
+            setTotalPages(res.data.totalPages || 1);
             setLoading(false);
         } catch (err) {
             setError('Error loading projects.');
@@ -100,7 +110,6 @@ export default function Projects() {
         }
     };
 
-    // --- Edit Project Functions ---
     const openEditModal = (project) => {
         setEditModalProject(project);
         setEditName(project.name);
@@ -131,7 +140,6 @@ export default function Projects() {
         }
     };
 
-    // --- Archive & Delete Functions ---
     const handleArchiveProject = async (projectId, currentArchiveStatus) => {
         if (!window.confirm(`Are you sure you want to ${currentArchiveStatus ? 'unarchive' : 'archive'} this project?`)) return;
         try {
@@ -152,7 +160,6 @@ export default function Projects() {
         }
     };
 
-    // --- Team Management Functions ---
     const openTeamModal = async (project) => {
         setTeamModalProject(project);
         setNewMemberUserId('');
@@ -256,7 +263,17 @@ export default function Projects() {
                 </div>
             )}
 
-            <h3>Project List</h3>
+            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', background: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
+                <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}>
+                    <option value="">All Statuses</option>
+                    <option value="Planning">Planning</option>
+                    <option value="Active">Active</option>
+                    <option value="OnHold">OnHold</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
             <div style={{ display: 'grid', gap: '15px', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
                 {projects.map(p => (
                     <div key={p.id} style={{ background: p.isArchived ? '#f8f9fa' : 'white', opacity: p.isArchived ? 0.8 : 1, padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderLeft: p.isArchived ? '4px solid #6c757d' : '4px solid #007bff' }}>
@@ -295,7 +312,16 @@ export default function Projects() {
                 ))}
             </div>
 
-            {/* Edit Project Modal */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '30px' }}>
+                <button disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)} style={{ padding: '8px 15px', background: currentPage <= 1 ? '#e9ecef' : '#007bff', color: currentPage <= 1 ? '#6c757d' : 'white', border: 'none', borderRadius: '4px', cursor: currentPage <= 1 ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                    Previous
+                </button>
+                <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Page {currentPage} of {totalPages || 1}</span>
+                <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} style={{ padding: '8px 15px', background: currentPage >= totalPages ? '#e9ecef' : '#007bff', color: currentPage >= totalPages ? '#6c757d' : 'white', border: 'none', borderRadius: '4px', cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                    Next
+                </button>
+            </div>
+
             {editModalProject && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '95%', maxWidth: '600px', position: 'relative' }}>

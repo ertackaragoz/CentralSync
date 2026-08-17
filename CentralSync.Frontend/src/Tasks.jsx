@@ -44,11 +44,16 @@ export default function Tasks() {
 
     const [histories, setHistories] = useState([]);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [filterProjectId, setFilterProjectId] = useState('');
+    const [filterPriority, setFilterPriority] = useState('');
+    const [filterDueBefore, setFilterDueBefore] = useState('');
+    const [filterDueAfter, setFilterDueAfter] = useState('');
+
     const columns = ['Todo', 'InProgress', 'InReview', 'Done'];
 
     useEffect(() => {
-        fetchInitialData();
-
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -65,6 +70,10 @@ export default function Tasks() {
     }, []);
 
     useEffect(() => {
+        fetchInitialData();
+    }, [currentPage, filterProjectId, filterPriority, filterDueBefore, filterDueAfter]);
+
+    useEffect(() => {
         if (projectId) {
             fetchProjectMembers(projectId);
         } else {
@@ -75,13 +84,23 @@ export default function Tasks() {
 
     const fetchInitialData = async () => {
         try {
+            const params = {
+                page: currentPage,
+                pageSize: 20
+            };
+            if (filterProjectId) params.projectId = filterProjectId;
+            if (filterPriority) params.priority = filterPriority;
+            if (filterDueBefore) params.dueBefore = new Date(filterDueBefore).toISOString();
+            if (filterDueAfter) params.dueAfter = new Date(filterDueAfter).toISOString();
+
             const [projectsRes, tasksRes] = await Promise.all([
-                api.get('/projects'),
-                api.get('/tasks')
+                api.get('/projects', { params: { pageSize: 1000 } }),
+                api.get('/tasks', { params })
             ]);
 
             setProjects(projectsRes.data.items || projectsRes.data);
             setTasks(tasksRes.data.items || tasksRes.data);
+            setTotalPages(tasksRes.data.totalPages || 1);
             setLoading(false);
         } catch (err) {
             setError('Error loading data.');
@@ -353,6 +372,14 @@ export default function Tasks() {
         }
     };
 
+    const clearFilters = () => {
+        setFilterProjectId('');
+        setFilterPriority('');
+        setFilterDueBefore('');
+        setFilterDueAfter('');
+        setCurrentPage(1);
+    };
+
     if (loading) return <div style={{ padding: '50px' }}>Loading...</div>;
 
     return (
@@ -430,6 +457,35 @@ export default function Tasks() {
                 </div>
             )}
 
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', background: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Project</label>
+                    <select value={filterProjectId} onChange={(e) => { setFilterProjectId(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px' }}>
+                        <option value="">All Projects</option>
+                        {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Priority</label>
+                    <select value={filterPriority} onChange={(e) => { setFilterPriority(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '150px' }}>
+                        <option value="">All Priorities</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                    </select>
+                </div>
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Due After</label>
+                    <input type="date" value={filterDueAfter} onChange={(e) => { setFilterDueAfter(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                </div>
+                <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Due Before</label>
+                    <input type="date" value={filterDueBefore} onChange={(e) => { setFilterDueBefore(e.target.value); setCurrentPage(1); }} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                </div>
+                <button onClick={clearFilters} style={{ padding: '8px 15px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', height: '35px' }}>Clear</button>
+            </div>
+
             <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(4, 1fr)', alignItems: 'start' }}>
                 {columns.map(column => (
                     <div
@@ -484,6 +540,16 @@ export default function Tasks() {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '30px' }}>
+                <button disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)} style={{ padding: '8px 15px', background: currentPage <= 1 ? '#e9ecef' : '#007bff', color: currentPage <= 1 ? '#6c757d' : 'white', border: 'none', borderRadius: '4px', cursor: currentPage <= 1 ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                    Previous
+                </button>
+                <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Page {currentPage} of {totalPages || 1}</span>
+                <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} style={{ padding: '8px 15px', background: currentPage >= totalPages ? '#e9ecef' : '#007bff', color: currentPage >= totalPages ? '#6c757d' : 'white', border: 'none', borderRadius: '4px', cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                    Next
+                </button>
             </div>
 
             {selectedTask && (
