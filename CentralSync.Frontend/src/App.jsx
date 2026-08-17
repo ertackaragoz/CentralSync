@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Login';
+import Register from './Register';
 import Projects from './Projects';
 import Tasks from './Tasks';
 import Users from './Users';
@@ -12,7 +13,8 @@ function App() {
       <Routes>
         <Route path="/" element={isAuthenticated ? <Navigate to="/projects" /> : <Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/users" element={<Users />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/users" element={isAuthenticated ? <Users /> : <Navigate to="/login" />} />
         <Route path="/projects" element={isAuthenticated ? <Projects /> : <Navigate to="/login" />} />
         <Route path="/tasks" element={isAuthenticated ? <Tasks /> : <Navigate to="/login" />} />
       </Routes>
