@@ -157,16 +157,21 @@ export default function Tasks() {
         }
     };
 
-    const handleDeleteTask = (taskId) => {
-        setTimeout(async () => {
-            if (!window.confirm('Are you sure you want to delete this task?')) return;
-            try {
-                await api.delete(`/tasks/${taskId}`);
-                fetchInitialData();
-            } catch (err) {
-                alert(err.response?.data?.message || 'Task could not be deleted!');
-            }
-        }, 50);
+    const handleDeleteTask = async (taskId) => {
+        const isConfirmed = window.confirm('Are you sure you want to delete this task?');
+
+        window.focus();
+
+        if (!isConfirmed) return;
+
+        try {
+            await api.delete(`/tasks/${taskId}`);
+            fetchInitialData();
+            setTimeout(() => window.focus(), 50);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Task could not be deleted!');
+            window.focus();
+        }
     };
 
     const handleStatusChange = async (taskId, newStatus) => {
@@ -439,8 +444,26 @@ export default function Tasks() {
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', wordBreak: 'break-word' }}>{task.title}</h4>
+                                        {/* Sadece yetkililer görev silebilir */}
                                         {canManageTask(task) && (
-                                            <button onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }} style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}>×</button>
+                                            <button
+                                                onMouseDown={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                }}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    document.activeElement?.blur();
+
+                                                    setTimeout(() => {
+                                                        handleDeleteTask(task.id);
+                                                    }, 10);
+                                                }}
+                                                style={{ background: 'transparent', border: 'none', color: 'red', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
+                                            >
+                                                ×
+                                            </button>
                                         )}
                                     </div>
                                     <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px 0' }}>
