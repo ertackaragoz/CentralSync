@@ -94,5 +94,21 @@ namespace CentralSync.API.Repositories.Concrete
                 pm.UserId == userId &&
                 pm.IsActive);
         }
+
+        public async Task SetUserProjectRolesAsync(
+           Guid userId,
+           ProjectMemberRole role)
+        {
+            var memberships = await _dbcontext.ProjectMembers
+                .Where(pm => pm.UserId == userId && pm.IsActive)
+                .ToListAsync();
+
+            foreach (var membership in memberships)
+            {
+                membership.Role = role;
+            }
+
+            await _dbcontext.SaveChangesAsync();
+        }
     }
 }

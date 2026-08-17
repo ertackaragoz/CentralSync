@@ -10,6 +10,7 @@ namespace CentralSync.API.Repositories.Abstract
         Task<List<ProjectMember>> GetProjectMembersAsync(Guid id, ProjectMemberRole? role);
         Task<Project?> GetByIdAsync(Guid id);
         Task<ProjectMember> AddMemberToProjectAsync(ProjectMember member);
+        Task SetUserProjectRolesAsync(Guid userId, ProjectMemberRole role);
         Task<ProjectMemberRole?> GetUserRoleInProjectAsync(Guid projectId, Guid userId);
         Task<bool> IsUserActiveMemberAsync(Guid projectId, Guid userId);
         Task<Project> UpdateAsync(Project project);

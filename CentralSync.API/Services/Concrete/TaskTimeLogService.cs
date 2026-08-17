@@ -13,7 +13,11 @@ namespace CentralSync.API.Services.Concrete
         private readonly IProjectRepository _projectRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public TaskTimeLogService(ITaskTimeLogRepository taskTimeLogRepository, ITaskRepository taskRepository, IProjectRepository projectRepository, ICurrentUserService currentUserService)
+        public TaskTimeLogService(
+            ITaskTimeLogRepository taskTimeLogRepository,
+            ITaskRepository taskRepository,
+            IProjectRepository projectRepository,
+            ICurrentUserService currentUserService)
         {
             _taskTimeLogRepository = taskTimeLogRepository;
             _taskRepository = taskRepository;
@@ -21,15 +25,20 @@ namespace CentralSync.API.Services.Concrete
             _currentUserService = currentUserService;
         }
 
-        public async Task<TaskTimeLogDto> AddTaskTimeLogAsync(Guid taskId, CreateTaskTimeLogRequestDto request)
+        public async Task<TaskTimeLogDto> AddTaskTimeLogAsync(
+            Guid taskId,
+            CreateTaskTimeLogRequestDto request)
         {
-            if (request.Hours < 0) throw new ArgumentException("Task time can't be negative");
+            if (request.Hours < 0)
+                throw new ArgumentException("Task time can't be negative");
 
             var task = await _taskRepository.GetByIdAsync(taskId);
-            if (task == null) throw new KeyNotFoundException("Task not found");
+            if (task == null)
+                throw new KeyNotFoundException("Task not found");
 
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
-            if (project == null) throw new KeyNotFoundException("Project not found");
+            if (project == null)
+                throw new KeyNotFoundException("Project not found");
 
             await EnsureCanWriteAsync(project);
 
@@ -57,17 +66,28 @@ namespace CentralSync.API.Services.Concrete
             };
         }
 
-        public async Task<List<TaskTimeLogDto>> GetAllTimeLogsAsync(Guid? userId, Guid? taskId, DateTime? startDate, DateTime? endDate)
+        public async Task<List<TaskTimeLogDto>> GetAllTimeLogsAsync(
+            Guid? userId,
+            Guid? taskId,
+            DateTime? startDate,
+            DateTime? endDate)
         {
             var logs = await _taskTimeLogRepository.GetAllAsync(
-                userId, taskId, startDate, endDate, _currentUserService.UserId, _currentUserService.Role == UserRole.Admin);
+                userId,
+                taskId,
+                startDate,
+                endDate,
+                _currentUserService.UserId,
+                _currentUserService.Role == UserRole.Admin);
 
             return logs.Select(log => new TaskTimeLogDto
             {
                 Id = log.Id,
                 TaskId = log.TaskId,
                 UserId = log.UserId,
-                UserFullName = log.User != null ? $"{log.User.FirstName} {log.User.LastName}" : "Unknown User",
+                UserFullName = log.User != null
+                    ? $"{log.User.FirstName} {log.User.LastName}"
+                    : "Unknown User",
                 Hours = log.Hours,
                 Description = log.Description,
                 WorkDate = log.WorkDate,
@@ -78,7 +98,8 @@ namespace CentralSync.API.Services.Concrete
         public async Task<List<TaskTimeLogDto>> GetTaskTimeLogsByTaskIdAsync(Guid taskId)
         {
             var task = await _taskRepository.GetByIdAsync(taskId);
-            if (task == null) throw new KeyNotFoundException("Task not found");
+            if (task == null)
+                throw new KeyNotFoundException("Task not found");
 
             await EnsureCanReadAsync(task.ProjectId);
 
@@ -89,7 +110,9 @@ namespace CentralSync.API.Services.Concrete
                 Id = log.Id,
                 TaskId = log.TaskId,
                 UserId = log.UserId,
-                UserFullName = log.User != null ? $"{log.User.FirstName} {log.User.LastName}" : "Unknown User",
+                UserFullName = log.User != null
+                    ? $"{log.User.FirstName} {log.User.LastName}"
+                    : "Unknown User",
                 Hours = log.Hours,
                 Description = log.Description,
                 WorkDate = log.WorkDate,
@@ -99,28 +122,58 @@ namespace CentralSync.API.Services.Concrete
 
         private async Task EnsureCanWriteAsync(Project project)
         {
-            if (project.OwnerId == _currentUserService.UserId) return;
+            if (_currentUserService.Role == UserRole.Viewer)
+            {
+                throw new UnauthorizedAccessException(
+                    "Global viewers cannot add time logs.");
+            }
 
-            var role = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
+            var role = await _projectRepository.GetUserRoleInProjectAsync(
+                project.Id,
+                _currentUserService.UserId);
+
             if (role == ProjectMemberRole.Viewer)
-                throw new UnauthorizedAccessException("Viewers can't add time logs.");
+            {
+                throw new UnauthorizedAccessException(
+                    "Project viewers can't add time logs.");
+            }
 
-            if (role.HasValue && (role.Value == ProjectMemberRole.Member || role.Value == ProjectMemberRole.Contributor))
+            if (project.OwnerId == _currentUserService.UserId)
                 return;
 
-            if (_currentUserService.Role == UserRole.Admin) return;
+            if (role.HasValue &&
+                (role.Value == ProjectMemberRole.Member ||
+                 role.Value == ProjectMemberRole.Contributor))
+            {
+                return;
+            }
 
-            throw new UnauthorizedAccessException("You need to be a member of this project to add time logs.");
+            if (_currentUserService.Role == UserRole.Admin)
+                return;
+
+            throw new UnauthorizedAccessException(
+                "You need to be a member of this project to add time logs.");
         }
 
         private async Task EnsureCanReadAsync(Guid projectId)
         {
-            if (_currentUserService.Role == UserRole.Admin) return;
+            if (_currentUserService.Role == UserRole.Admin)
+                return;
+
             var project = await _projectRepository.GetByIdAsync(projectId);
-            if (project == null) throw new KeyNotFoundException("Project not found");
-            if (project.OwnerId == _currentUserService.UserId) return;
-            if (!await _projectRepository.IsUserActiveMemberAsync(projectId, _currentUserService.UserId))
-                throw new UnauthorizedAccessException("You must be an active member of this project.");
+            if (project == null)
+                throw new KeyNotFoundException("Project not found");
+
+            if (project.OwnerId == _currentUserService.UserId)
+                return;
+
+            if (!await _projectRepository.IsUserActiveMemberAsync(
+                    projectId,
+                    _currentUserService.UserId))
+            {
+                throw new UnauthorizedAccessException(
+                    "You must be an active member of this project.");
+            }
         }
     }
 }

@@ -8,19 +8,36 @@ namespace CentralSync.API.Services.Concrete
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(
+            IUserRepository userRepository,
+            IProjectRepository projectRepository)
         {
             _userRepository = userRepository;
+            _projectRepository = projectRepository;
         }
-        public async Task<bool> ChangeUserRoleAsync(Guid userId, UserRole newRole)
+
+        public async Task<bool> ChangeUserRoleAsync(
+            Guid userId,
+            UserRole newRole)
         {
             var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null) return false;
+
+            if (user == null)
+                return false;
 
             user.Role = newRole;
 
             await _userRepository.UpdateAsync(user);
+
+            if (newRole == UserRole.Viewer)
+            {
+                await _projectRepository.SetUserProjectRolesAsync(
+                    userId,
+                    ProjectMemberRole.Viewer);
+            }
+
             return true;
         }
 
@@ -44,11 +61,14 @@ namespace CentralSync.API.Services.Concrete
         public async Task<bool> ToggleUserStatusAsync(Guid userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null) return false;
+
+            if (user == null)
+                return false;
 
             user.IsActive = !user.IsActive;
 
             await _userRepository.UpdateAsync(user);
+
             return true;
         }
     }

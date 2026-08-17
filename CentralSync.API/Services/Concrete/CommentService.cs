@@ -13,7 +13,11 @@ namespace CentralSync.API.Services.Concrete
         private readonly IProjectRepository _projectRepository;
         private readonly ICurrentUserService _currentUserService;
 
-        public CommentService(ICommentRepository commentRepository, ITaskRepository taskRepository, IProjectRepository projectRepository, ICurrentUserService currentUserService)
+        public CommentService(
+            ICommentRepository commentRepository,
+            ITaskRepository taskRepository,
+            IProjectRepository projectRepository,
+            ICurrentUserService currentUserService)
         {
             _commentRepository = commentRepository;
             _taskRepository = taskRepository;
@@ -21,13 +25,19 @@ namespace CentralSync.API.Services.Concrete
             _currentUserService = currentUserService;
         }
 
-        public async Task<CommentDto> AddCommentAsync(Guid taskId, CreateCommentRequestDto request)
+        public async Task<CommentDto> AddCommentAsync(
+            Guid taskId,
+            CreateCommentRequestDto request)
         {
             var task = await _taskRepository.GetByIdAsync(taskId);
-            if (task == null) throw new KeyNotFoundException("Task not found.");
+
+            if (task == null)
+                throw new KeyNotFoundException("Task not found.");
 
             var project = await _projectRepository.GetByIdAsync(task.ProjectId);
-            if (project == null) throw new KeyNotFoundException("Project not found.");
+
+            if (project == null)
+                throw new KeyNotFoundException("Project not found.");
 
             await EnsureCanWriteAsync(project);
 
@@ -55,66 +65,151 @@ namespace CentralSync.API.Services.Concrete
         public async Task<bool> DeleteCommentAsync(Guid commentId)
         {
             var comment = await _commentRepository.GetByIdAsync(commentId);
-            if (comment == null) return false;
-            if (_currentUserService.Role != UserRole.Admin && comment.UserId != _currentUserService.UserId)
-                throw new UnauthorizedAccessException("You can only delete your own comments.");
+
+            if (comment == null)
+                return false;
+
+            var task = await _taskRepository.GetByIdAsync(comment.TaskId);
+
+            if (task == null)
+                throw new KeyNotFoundException("Task not found.");
+
+            var project = await _projectRepository.GetByIdAsync(task.ProjectId);
+
+            if (project == null)
+                throw new KeyNotFoundException("Project not found.");
+
+            await EnsureCanWriteAsync(project);
+
+            if (_currentUserService.Role != UserRole.Admin &&
+                comment.UserId != _currentUserService.UserId)
+            {
+                throw new UnauthorizedAccessException(
+                    "You can only delete your own comments.");
+            }
 
             comment.IsDeleted = true;
+
             await _commentRepository.UpdateAsync(comment);
+
             return true;
         }
 
         public async Task<List<CommentDto>> GetByTaskIdAsync(Guid taskId)
         {
             var task = await _taskRepository.GetByIdAsync(taskId);
-            if (task == null) throw new KeyNotFoundException("Task not found.");
+
+            if (task == null)
+                throw new KeyNotFoundException("Task not found.");
 
             await EnsureCanReadAsync(task.ProjectId);
 
-            var comments = await _commentRepository.GetByTaskIdAsync(taskId);
+            var comments =
+                await _commentRepository.GetByTaskIdAsync(taskId);
+
             return comments.Select(c => new CommentDto
             {
-                Id = c.Id, Content = c.Content, TaskId = c.TaskId, UserId = c.UserId,
-                UserName = $"{c.User.FirstName} {c.User.LastName}", CreatedAt = c.CreatedAt, UpdatedAt = c.UpdatedAt
+                Id = c.Id,
+                Content = c.Content,
+                TaskId = c.TaskId,
+                UserId = c.UserId,
+                UserName = $"{c.User.FirstName} {c.User.LastName}",
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt
             }).ToList();
         }
 
-        public async Task<bool> UpdateCommentAsync(Guid commentId, UpdateCommentRequestDto request)
+        public async Task<bool> UpdateCommentAsync(
+            Guid commentId,
+            UpdateCommentRequestDto request)
         {
             var comment = await _commentRepository.GetByIdAsync(commentId);
-            if (comment == null) return false;
-            if (_currentUserService.Role != UserRole.Admin && comment.UserId != _currentUserService.UserId)
-                throw new UnauthorizedAccessException("You can only edit your own comments.");
+
+            if (comment == null)
+                return false;
+
+            var task = await _taskRepository.GetByIdAsync(comment.TaskId);
+
+            if (task == null)
+                throw new KeyNotFoundException("Task not found.");
+
+            var project = await _projectRepository.GetByIdAsync(task.ProjectId);
+
+            if (project == null)
+                throw new KeyNotFoundException("Project not found.");
+
+            await EnsureCanWriteAsync(project);
+
+            if (_currentUserService.Role != UserRole.Admin &&
+                comment.UserId != _currentUserService.UserId)
+            {
+                throw new UnauthorizedAccessException(
+                    "You can only edit your own comments.");
+            }
 
             comment.Content = request.Content;
+
             await _commentRepository.UpdateAsync(comment);
+
             return true;
         }
 
         private async Task EnsureCanWriteAsync(Project project)
         {
-            if (project.OwnerId == _currentUserService.UserId) return;
+            if (_currentUserService.Role == UserRole.Viewer)
+            {
+                throw new UnauthorizedAccessException(
+                    "Global viewers cannot write comments.");
+            }
 
-            var role = await _projectRepository.GetUserRoleInProjectAsync(project.Id, _currentUserService.UserId);
+            var role =
+                await _projectRepository.GetUserRoleInProjectAsync(
+                    project.Id,
+                    _currentUserService.UserId);
+
             if (role == ProjectMemberRole.Viewer)
-                throw new UnauthorizedAccessException("Viewers cannot add comments to tasks.");
+            {
+                throw new UnauthorizedAccessException(
+                    "Project viewers cannot write comments.");
+            }
 
-            if (role.HasValue && (role.Value == ProjectMemberRole.Member || role.Value == ProjectMemberRole.Contributor))
+            if (project.OwnerId == _currentUserService.UserId)
                 return;
 
-            if (_currentUserService.Role == UserRole.Admin) return;
+            if (role.HasValue &&
+                (role.Value == ProjectMemberRole.Member ||
+                 role.Value == ProjectMemberRole.Contributor))
+            {
+                return;
+            }
 
-            throw new UnauthorizedAccessException("You must be an active member of this project to comment.");
+            if (_currentUserService.Role == UserRole.Admin)
+                return;
+
+            throw new UnauthorizedAccessException(
+                "You must be an active member of this project to comment.");
         }
 
         private async Task EnsureCanReadAsync(Guid projectId)
         {
-            if (_currentUserService.Role == UserRole.Admin) return;
+            if (_currentUserService.Role == UserRole.Admin)
+                return;
+
             var project = await _projectRepository.GetByIdAsync(projectId);
-            if (project == null) throw new KeyNotFoundException("Project not found.");
-            if (project.OwnerId == _currentUserService.UserId) return;
-            if (!await _projectRepository.IsUserActiveMemberAsync(projectId, _currentUserService.UserId))
-                throw new UnauthorizedAccessException("You must be an active member of this project.");
+
+            if (project == null)
+                throw new KeyNotFoundException("Project not found.");
+
+            if (project.OwnerId == _currentUserService.UserId)
+                return;
+
+            if (!await _projectRepository.IsUserActiveMemberAsync(
+                    projectId,
+                    _currentUserService.UserId))
+            {
+                throw new UnauthorizedAccessException(
+                    "You must be an active member of this project.");
+            }
         }
     }
 }
