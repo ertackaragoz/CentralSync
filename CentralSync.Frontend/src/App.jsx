@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './index.css';
 import Login from './Login';
 import Register from './Register';
@@ -9,24 +9,108 @@ import Users from './Users';
 import TimeLogs from './TimeLogs';
 import Layout from './Layout';
 
-function App() {
+function RequireAuth({ children }) {
+    const location = useLocation();
     const isAuthenticated = !!localStorage.getItem('token');
 
+    if (!isAuthenticated) {
+        return <Navigate to='/login' replace state={{ from: location.pathname }} />;
+    }
+
+    return children;
+}
+
+function RequireGuest({ children }) {
+    const isAuthenticated = !!localStorage.getItem('token');
+
+    if (isAuthenticated) {
+        return <Navigate to='/dashboard' replace />;
+    }
+
+    return children;
+}
+
+export default function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={isAuthenticated ? <Layout><Dashboard /></Layout> : <Navigate to="/login" replace />} />
-                <Route path="/users" element={isAuthenticated ? <Layout><Users /></Layout> : <Navigate to="/login" replace />} />
-                <Route path="/projects" element={isAuthenticated ? <Layout><Projects /></Layout> : <Navigate to="/login" replace />} />
-                <Route path="/tasks" element={isAuthenticated ? <Layout><Tasks /></Layout> : <Navigate to="/login" replace />} />
-                <Route path="/time-logs" element={isAuthenticated ? <Layout><TimeLogs /></Layout> : <Navigate to="/login" replace />} />
-                <Route path="*" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+                <Route
+                    path="/login"
+                    element={
+                        <RequireGuest>
+                            <Login />
+                        </RequireGuest>
+                    }
+                />
+
+                <Route
+                    path="/register"
+                    element={
+                        <RequireGuest>
+                            <Register />
+                        </RequireGuest>
+                    }
+                />
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <RequireAuth>
+                            <Layout>
+                                <Dashboard />
+                            </Layout>
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/users"
+                    element={
+                        <RequireAuth>
+                            <Layout>
+                                <Users />
+                            </Layout>
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/projects"
+                    element={
+                        <RequireAuth>
+                            <Layout>
+                                <Projects />
+                            </Layout>
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/tasks"
+                    element={
+                        <RequireAuth>
+                            <Layout>
+                                <Tasks />
+                            </Layout>
+                        </RequireAuth>
+                    }
+                />
+
+                <Route
+                    path="/time-logs"
+                    element={
+                        <RequireAuth>
+                            <Layout>
+                                <TimeLogs />
+                            </Layout>
+                        </RequireAuth>
+                    }
+                />
+
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
         </Router>
     );
 }
-
-export default App;

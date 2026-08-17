@@ -32,11 +32,13 @@ export default function Layout({ children }) {
         return location.pathname === path || location.pathname.startsWith(`${path}/`);
     };
 
+    const canViewTeam = role === 'Admin';
+
     return (
         <div className="app-shell">
             <div className="brand-glow" aria-hidden="true"></div>
 
-            <nav className="dashboard-nav">
+            <nav className={`dashboard-nav ${canViewTeam ? 'nav-four-items' : 'nav-three-items'}`}>
                 <button className="brand brand-button" onClick={() => navigate('/dashboard')} aria-label="Panel">
                     <div className="brand-bars"><span></span><span></span><span></span></div>
                     <div className="brand-word"><strong>CENTRAL</strong><span>Sync</span></div>
@@ -46,7 +48,9 @@ export default function Layout({ children }) {
                     <button className={isActive('/dashboard') ? 'active' : ''} onClick={() => navigate('/dashboard')}>Panel</button>
                     <button className={isActive('/tasks') ? 'active' : ''} onClick={() => navigate('/tasks')}>Görevler</button>
                     <button className={isActive('/projects') ? 'active' : ''} onClick={() => navigate('/projects')}>Projeler</button>
-                    <button className={isActive('/users') ? 'active' : ''} onClick={() => navigate('/users')}>Ekip</button>
+                    {canViewTeam && (
+                        <button className={isActive('/users') ? 'active' : ''} onClick={() => navigate('/users')}>Ekip</button>
+                    )}
                 </div>
 
                 <button className="outline-button" onClick={logout}>Çıkış Yap</button>

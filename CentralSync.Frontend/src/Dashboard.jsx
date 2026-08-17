@@ -38,11 +38,20 @@ export default function Dashboard() {
             const payload = JSON.parse(atob(token.split('.')[1]));
             const id = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || payload.nameid || payload.sub || payload.id || '';
             const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role || '';
-            const first = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || payload.given_name || payload.firstName || '';
-            const last = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || payload.family_name || payload.lastName || '';
+            const first = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || payload.given_name || payload.firstName || payload.firstname || '';
+            const last = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] || payload.family_name || payload.lastName || payload.lastname || '';
+            const fullName = payload.name || payload.fullName || payload.displayName || '';
+            const email = payload.email || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '';
             setCurrentUserId(String(id));
             setCurrentUserRole(role);
-            if (first || last) setCurrentUserName(`${first} ${last}`.trim());
+            if (first || last) {
+                setCurrentUserName(`${first} ${last}`.trim());
+            } else if (fullName) {
+                setCurrentUserName(fullName);
+            } else if (email) {
+                const localPart = String(email).split('@')[0].split(/[._-]/)[0];
+                if (localPart) setCurrentUserName(localPart.charAt(0).toUpperCase() + localPart.slice(1));
+            }
         } catch {
             localStorage.removeItem('token');
             navigate('/login');
@@ -117,6 +126,31 @@ export default function Dashboard() {
             if (me.role) setCurrentUserRole(me.role);
         }
     }, [currentUserId, users]);
+
+    useEffect(() => {
+        if (!currentUserId || currentUserName !== 'Kullanıcı' || !timeLogs.length) return;
+
+        const ownLog = timeLogs.find(log => String(log.userId) === String(currentUserId) && log.userFullName);
+        if (ownLog?.userFullName) {
+            setCurrentUserName(ownLog.userFullName);
+        }
+    }, [currentUserId, currentUserName, timeLogs]);
+
+    useEffect(() => {
+        if (!currentUserId || currentUserName !== 'Kullanıcı') return;
+
+        const assignedTask = tasks.find(task => String(task.assignedToUserId) === String(currentUserId));
+        const candidate =
+            assignedTask?.assignedToUser ||
+            assignedTask?.assignedUser ||
+            assignedTask?.assignedUserDto ||
+            assignedTask?.user;
+
+        if (candidate?.firstName) {
+            const fullName = `${candidate.firstName} ${candidate.lastName || ''}`.trim();
+            if (fullName) setCurrentUserName(fullName);
+        }
+    }, [currentUserId, currentUserName, tasks]);
 
     const myTasks = useMemo(() => {
         if (!currentUserId) return [];
