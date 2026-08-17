@@ -21,6 +21,33 @@ namespace CentralSync.API.Repositories.Concrete
             return taskTimeLog;
         }
 
+        public async Task<List<TaskTimeLog>> GetAllAsync(Guid? userId, Guid? taskId, DateTime? startDate, DateTime? endDate)
+        {
+            var query = _dbcontext.TaskTimeLogs.Include(t => t.User).AsQueryable();
+
+            if (userId.HasValue)
+            {
+                query = query.Where(t => t.UserId == userId.Value);
+            }
+
+            if (taskId.HasValue)
+            {
+                query = query.Where(t => t.TaskId == taskId.Value);
+            }
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(t => t.WorkDate >= startDate.Value.Date);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(t => t.WorkDate <= endDate.Value.Date);
+            }
+
+            return await query.OrderByDescending(t => t.WorkDate).ToListAsync();
+        }
+
         public async Task<List<TaskTimeLog>> GetByTaskIdAsync(Guid taskId)
         {
             return await _dbcontext.TaskTimeLogs

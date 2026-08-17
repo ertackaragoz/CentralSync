@@ -6,5 +6,6 @@ namespace CentralSync.API.Services.Abstract
     {
         Task<TaskTimeLogDto> AddTaskTimeLogAsync(Guid taskId, CreateTaskTimeLogRequestDto request);
         Task<List<TaskTimeLogDto>> GetTaskTimeLogsByTaskIdAsync(Guid taskId);
+        Task<List<TaskTimeLogDto>> GetAllTimeLogsAsync(Guid? userId, Guid? taskId, DateTime? startDate, DateTime? endDate);
     }
 }

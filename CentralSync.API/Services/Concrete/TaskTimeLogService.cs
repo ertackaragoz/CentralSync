@@ -72,6 +72,28 @@ namespace CentralSync.API.Services.Concrete
             };
         }
 
+        public async Task<List<TaskTimeLogDto>> GetAllTimeLogsAsync(Guid? userId, Guid? taskId, DateTime? startDate, DateTime? endDate)
+        {
+            if (_currentUserService.Role == UserRole.TeamMember)
+            {
+                userId = _currentUserService.UserId;
+            }
+
+            var logs = await _taskTimeLogRepository.GetAllAsync(userId, taskId, startDate, endDate);
+
+            return logs.Select(log => new TaskTimeLogDto
+            {
+                Id = log.Id,
+                TaskId = log.TaskId,
+                UserId = log.UserId,
+                UserFullName = log.User != null ? $"{log.User.FirstName} {log.User.LastName}" : "Unknown User",
+                Hours = log.Hours,
+                Description = log.Description,
+                WorkDate = log.WorkDate,
+                CreatedAt = log.CreatedAt
+            }).ToList();
+        }
+
         public async Task<List<TaskTimeLogDto>> GetTaskTimeLogsByTaskIdAsync(Guid taskId)
         {
             var logs = await _taskTimeLogRepository.GetByTaskIdAsync(taskId);
