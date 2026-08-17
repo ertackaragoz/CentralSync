@@ -399,6 +399,9 @@ export default function Tasks() {
                     >
                         Logout
                     </button>
+                    <button onClick={() => { window.location.href = '/time-logs'; }} style={{ padding: '8px 15px', background: '#ffc107', color: '#000', border: 'none', cursor: 'pointer', marginRight: '10px', borderRadius: '4px', fontWeight: 'bold' }}>
+                        Time Logs
+                    </button>
                 </div>
             </div>
 
