@@ -160,7 +160,15 @@ Kendi lokal geliştirme anahtarınızı belirleyin:
 dotnet user-secrets set "Jwt:Key" "kendi-lokal-test-anahtarinizi-buraya-yazin-en-az-32-karakter"
 ```
 
-### 4. Veritabanını oluşturun / güncelleyin
+### 4. Yüklü değilse eğer, makinenize Entity Framework Core araçlarını yükleyin.
+
+Entity Framework Core araçlarını yüklemek için:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+### 5. Veritabanını oluşturun / güncelleyin
 
 Entity Framework Core migration'larını uygulamak için:
 
@@ -168,7 +176,7 @@ Entity Framework Core migration'larını uygulamak için:
 dotnet ef database update
 ```
 
-### 5. Backend'i çalıştırın
+### 6. Backend'i çalıştırın
 
 ```bash
 dotnet run
