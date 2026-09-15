@@ -185,8 +185,11 @@ dotnet run
 API, Swagger üzerinden test edilebilir:
 
 ```text
-https://localhost:<port>/swagger
+http://localhost:5265/swagger
 ```
+### Not
+
+Eğer backend'i terminal yerine doğrudan Visual Studio üzerinden "Run" butonuna basarak başlatırsanız, uygulama https profiliyle farklı bir portta (örneğin https://localhost:7079) ayağa kalkabilir. Frontend'in API ile sorunsuz haberleşebilmesi için backend'in lütfen yukarıda belirtildiği gibi terminal üzerinden dotnet run komutuyla (http://localhost:5265) çalıştırıldığından emin olun.
 
 ---
 
